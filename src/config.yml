@@ -1,0 +1,51 @@
+discord:
+  bot:
+    token: ""
+    server: 0 # Server ID
+    global-channel: 0 # Global channel ID
+
+  notifications:
+    server-start: true
+    server-stop: true
+
+    connection-messages: true
+    player-death-messages: true
+  
+  colors:
+    # color values were taken from https://htmlcolorcodes.com/minecraft-color-codes/
+    black: 0x010101 # Color with value 0 is means no color, so we use a very dark gray instead
+    dark_blue: 0x0000AA
+    dark_green: 0x00AA00
+    dark_aqua: 0x00AAAA
+    dark_red: 0xAA0000
+    dark_purple: 0xAA00AA
+    gold: 0xFFAA00
+    gray: 0xAAAAAA
+    dark_gray: 0x555555
+    blue: 0x5555FF
+    green: 0x55FF55
+    aqua: 0x55FFFF
+    red: 0xFF5555
+    light_purple: 0xFF55FF
+    yellow: 0xFFFF55
+    white: 0xFFFFFF
+
+messages:
+  en:
+    plugin-enabled: "%name% v%version% has been enabled!"
+
+    chat:
+      minecraft-format: "&6&l[&9&lDiscord&6&l] &c<%username%> &f%message% %attachments%"
+      minecraft-edited-format: "&6&l[&9&lDiscord&6&l] &c<%username%> &f%message% %attachments% &7&l(Edited)"
+      attachment-spoiler: " (spoiler)"
+      attachment-separator: ", "
+      discord-format: "**%username%**: %message%"
+
+    player:
+      connected: "The player **%player%** has connected to the server."
+      disconnected: "The player **%player%** has disconnected from the server."
+      advancement-gained: "**%player%** has gained the advancement **%advancement%**."
+
+    server:
+      start: "The server has started."
+      stop: "The server has stopped."

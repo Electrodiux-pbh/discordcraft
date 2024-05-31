@@ -1,0 +1,4 @@
+main: com.electrodiux.discordcraft.DiscordCraft
+version: 1.0
+name: DiscordCraft
+api-version: 1.16
