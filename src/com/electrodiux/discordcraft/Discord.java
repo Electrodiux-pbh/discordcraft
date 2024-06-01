@@ -6,6 +6,7 @@ import javax.security.auth.login.LoginException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+import com.electrodiux.discordcraft.commands.discord.CommandManager;
 import com.electrodiux.discordcraft.listeners.DiscordChatListener;
 
 import net.dv8tion.jda.api.JDA;
@@ -75,13 +76,20 @@ public class Discord {
 
     private static void configureActivity(JDABuilder builder) {
         String activityType = DiscordCraft.getConfiguration().getString("discord.bot.activity.type");
-        String activityText = DiscordCraft.getConfiguration().getString("discord.bot.activity.text");
+        String activityName = DiscordCraft.getConfiguration().getString("discord.bot.activity.name");
 
-        if (activityType != null && activityText != null) {
+        Bukkit.getConsoleSender().sendMessage("Activity type: " + activityType);
+        Bukkit.getConsoleSender().sendMessage("Activity name: " + activityName);
+
+        if (activityName != null) {
             ActivityType type = ActivityType.valueOf(activityType);
+
             if (type != null) {
-                builder.setActivity(Activity.of(type, activityText));
+                builder.setActivity(Activity.of(type, activityName));
+            } else {
+                builder.setActivity(Activity.playing(activityName));
             }
+
         }
     }
 
@@ -93,6 +101,7 @@ public class Discord {
             configureActivity(builder);
 
             builder.addEventListeners(new DiscordChatListener());
+            builder.addEventListeners(new CommandManager());
 
             api = builder.build();
             if (api == null) {
@@ -201,6 +210,11 @@ public class Discord {
 
     public static TextChannel getGlobalChannel() {
         return globalChannel;
+    }
+
+    public static void setGlobalChannel(TextChannel channel) {
+        globalChannel = channel;
+        DiscordCraft.getConfiguration().set("discord.bot.global-channel", channel.getIdLong());
     }
 
     public static int getDiscordColor(ChatColor color) {

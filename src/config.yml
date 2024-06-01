@@ -1,51 +1,77 @@
 discord:
   bot:
-    token: ""
+    token: "" # Your bot token
     server: 0 # Server ID
-    global-channel: 0 # Global channel ID
-
+    global-channel: 0 # Global channel ID (can be configured with globalchannel in discord)
+    activity:
+      type: PLAYING
+      name: Minecraft Server
+    commands:
+      playerlist:
+        enabled: true
+        name: playerlist
+        description: Shows the list of players online
+        admin-only: false
+        is-ephemeral: true
+      stop-server:
+        enabled: true
+        name: stop
+        description: Stops the minecraft server
+        admin-only: true
+        delay: 10 # The delay in seconds before the server stops (minimum 5 seconds)
+        message: The server is stopping in %seconds% seconds
+        is-ephemeral: true
+        show-title: true
+      set-global-channel:
+        enabled: true
+        name: globalchannel
+        admin-only: true
+        description: Sets the global channel
+        is-ephemeral: false
+  
   notifications:
     server-start: true
     server-stop: true
-
+    
     connection-messages: true
     player-death-messages: true
   
   colors:
     # color values were taken from https://htmlcolorcodes.com/minecraft-color-codes/
-    black: 0x010101 # Color with value 0 is means no color, so we use a very dark gray instead
-    dark_blue: 0x0000AA
-    dark_green: 0x00AA00
-    dark_aqua: 0x00AAAA
-    dark_red: 0xAA0000
-    dark_purple: 0xAA00AA
-    gold: 0xFFAA00
-    gray: 0xAAAAAA
-    dark_gray: 0x555555
-    blue: 0x5555FF
-    green: 0x55FF55
-    aqua: 0x55FFFF
-    red: 0xFF5555
-    light_purple: 0xFF55FF
-    yellow: 0xFFFF55
-    white: 0xFFFFFF
+    black: 65793 # Color with value 0 is means no color, so we use a very dark gray instead
+    dark_blue: 170
+    dark_green: 43520
+    dark_aqua: 43690
+    dark_red: 11141120
+    dark_purple: 11141290
+    gold: 16755200
+    gray: 11184810
+    dark_gray: 5592405
+    blue: 5592575
+    green: 5635925
+    aqua: 5636095
+    red: 16733525
+    light_purple: 16733695
+    yellow: 16777045
+    white: 16777215
 
 messages:
   en:
-    plugin-enabled: "%name% v%version% has been enabled!"
-
+    plugin-enabled: '%name% v%version% has been enabled!'
+    
     chat:
-      minecraft-format: "&6&l[&9&lDiscord&6&l] &c<%username%> &f%message% %attachments%"
-      minecraft-edited-format: "&6&l[&9&lDiscord&6&l] &c<%username%> &f%message% %attachments% &7&l(Edited)"
-      attachment-spoiler: " (spoiler)"
-      attachment-separator: ", "
-      discord-format: "**%username%**: %message%"
-
+      minecraft-format: '&6&l[&9&lDiscord&6&l] &c<%username%> &f%message% %attachments%'
+      minecraft-edited-format: '&6&l[&9&lDiscord&6&l] &c<%username%> &f%message% %attachments%
+        &7&l(Edited)'
+      attachment-spoiler: ' (spoiler)'
+      attachment-separator: ', '
+      discord-format: '**%username%**: %message%'
+    
     player:
-      connected: "The player **%player%** has connected to the server."
-      disconnected: "The player **%player%** has disconnected from the server."
-      advancement-gained: "**%player%** has gained the advancement **%advancement%**."
-
+      connected: The player **%player%** has connected to the server.
+      disconnected: The player **%player%** has disconnected from the server.
+      advancement-gained: '**%player%** has gained the advancement **%advancement%**.'
+    
     server:
-      start: "The server has started."
-      stop: "The server has stopped."
+      start: The server has started.
+      stop: The server has stopped.
