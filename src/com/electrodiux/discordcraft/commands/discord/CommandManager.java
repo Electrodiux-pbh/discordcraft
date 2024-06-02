@@ -29,6 +29,7 @@ public class CommandManager extends ListenerAdapter {
             commands.add(new StopServerCommand());
             commands.add(new BanCommand());
             commands.add(new PardonCommand());
+            commands.add(new WhitelistCommand());
             commands.add(new SetGlobalChannel());
         } catch (Exception e) {
             DiscordCraft.instance().getLogger().severe("An error occurred while adding commands!");

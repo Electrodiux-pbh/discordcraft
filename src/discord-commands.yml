@@ -21,10 +21,10 @@ commands:
         name: Banned
     messages:
       list-disabled: '%list_name% players list is disabled!'
-      list-empty: 'There are no %list_name% players online!'
+      list-empty: There are no %list_name% players online!
       list-header: 'List of %list_name% players (%player_count%):'
       list-row: '- ***%player%***'
-
+  
   stop-server:
     enabled: true
     command: stop
@@ -35,7 +35,7 @@ commands:
     message: The server is stopping in %seconds% seconds
     is-ephemeral: true
     show-title: true
-
+  
   set-global-channel:
     enabled: true
     command: globalchannel
@@ -43,7 +43,7 @@ commands:
     help: Help message for set-global-channel
     admin-only: true
     is-ephemeral: false
-    
+  
   help: # TODO: Add a flag to show only the commands that the user can use
     enabled: true
     command: help
@@ -53,7 +53,7 @@ commands:
     message: 'Here is the list of commands:'
     row-format: '- **%command%**: %message%'
     admin-only: false
-
+  
   ban:
     enabled: true
     command: ban
@@ -62,11 +62,11 @@ commands:
     admin-only: true
     is-ephemeral: true
     messages:
-      success: 'The player %player% has been banned because %reason%!'
-      already-banned: 'The player %player% is already banned!'
-      not-found: 'The player %player% was not found!'
-    default-reason: 'You have been banned from the server!'
-
+      success: The player %player% has been banned because %reason%!
+      already-banned: The player %player% is already banned!
+      not-found: The player %player% was not found!
+    default-reason: You have been banned from the server!
+  
   pardon:
     enabled: true
     command: pardon
@@ -75,5 +75,27 @@ commands:
     admin-only: true
     is-ephemeral: true
     messages:
-      success: 'The player %player% has been unbanned!'
-      not-banned: 'The player %player% is not banned!'
+      success: The player %player% has been unbanned!
+      not-banned: The player %player% is not banned!
+  
+  whitelist:
+    enabled: true
+    command: whitelist
+    description: Adds or removes a player from the whitelist
+    help: Help message for whitelist
+    admin-only: true
+    is-ephemeral: true
+    allow-toggle-whitelist: true
+    allow-modify-whitelist: true
+    messages:
+      add-success: The player %player% has been added to the whitelist!
+      remove-success: The player %player% has been removed from the whitelist!
+      already-whitelisted: The player %player% is already whitelisted!
+      not-whitelisted: The player %player% is not whitelisted!
+      not-found: The player %player% was not found!
+      no-player-option: You must specify a player to add or remove from the whitelist!
+      
+      enabled: The whitelist has been enabled!
+      already-enabled: The whitelist is already enabled!
+      disabled: The whitelist has been disabled!
+      already-disabled: The whitelist is already disabled!
