@@ -3,6 +3,7 @@ package com.electrodiux.discordcraft.listeners;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -45,16 +46,28 @@ public class PlayerEventsListener implements Listener {
     @EventHandler
     private void onPlayerDied(PlayerDeathEvent event) {
         if (playerDeathMessages) {
-            String deathMessage = event.getDeathMessage();
-            if (deathMessage != null) {
-                if (event.getEntity() instanceof Player) {
-                    Player player = (Player) event.getEntity();
+            if (event.getEntity() instanceof Player) {
+                Player player = (Player) event.getEntity();
 
-                    // Bold the player name
-                    deathMessage = deathMessage.replace(player.getName(), "**" + player.getName() + "**");
+                String deathMessageFormat = Messages.getRawMessage("player.death");
 
-                    Discord.sendGlobalMessage(deathMessage);
+                EntityDamageEvent damageEvent = event.getEntity().getLastDamageCause();
+                String deathMessage = Messages.getRawMessage("custom-death-messages." + damageEvent.getCause().name().toLowerCase());
+
+                if (deathMessage == null) {
+                    deathMessage = event.getDeathMessage();
+                } else {
+                    deathMessage = deathMessage.replace("%player%", player.getName());
                 }
+
+                deathMessage = deathMessage.replace(player.getName(), "**" + player.getName() + "**"); // Bold the player name
+
+                Discord.sendGlobalMessage(
+                    // Replace the placeholders in the death message format
+                    deathMessageFormat
+                    .replace("%player%", player.getName())
+                    .replace("%death_message%",  deathMessage)
+                );
             }
         }
     }

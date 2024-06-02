@@ -1,12 +1,4 @@
 discord:
-  bot:
-    token: "" # Your bot token
-    server: 0 # Server ID
-    global-channel: 0 # Global channel ID (can be configured with globalchannel in discord)
-    activity:
-      type: PLAYING
-      name: Minecraft Server
-  
   notifications:
     server-start: true
     server-stop: true
@@ -34,22 +26,44 @@ discord:
     white: 16777215
 
 messages:
-  en:
-    plugin-enabled: '%name% v%version% has been enabled!'
-    
-    chat:
-      minecraft-format: '&6&l[&9&lDiscord&6&l] &c<%username%> &f%message% %attachments%'
-      minecraft-edited-format: '&6&l[&9&lDiscord&6&l] &c<%username%> &f%message% %attachments%
-        &7&l(Edited)'
-      attachment-spoiler: ' (spoiler)'
-      attachment-separator: ', '
-      discord-format: '**%username%**: %message%'
-    
-    player:
-      connected: The player **%player%** has connected to the server.
-      disconnected: The player **%player%** has disconnected from the server.
-      advancement-gained: '**%player%** has gained the advancement **%advancement%**.'
-    
-    server:
-      start: The server has started.
-      stop: The server has stopped.
+  plugin-enabled: '%name% v%version% has been enabled!'
+  
+  chat:
+    minecraft-format: '&e<%username%> &f%message%&7%attachments%'
+    minecraft-edited-format: '&e<%username%> &f%message%&7%attachments% &8&l(Edited)'
+    attachment-spoiler: ' (spoiler)'
+    attachment-separator: ', '
+    discord-format: '**<%player%>:** %message%'
+  
+  player:
+    connected: "**%player%** has connected to the server. 😁 🎉"
+    disconnected: "**%player%** has disconnected from the server. 😭"
+    death: "[%death_message%] 💀"
+
+  custom-death-messages:
+    lava: "**%player%** fell into lava. 🔥🥵"
+    fire: "**%player%** burned to death. 🔥🥵"
+    fall: "**%player%** fell from a high place. 🪂"
+    void: "**%player%** fell into the void. ✨"
+    drowing: "**%player%** drowned. 🌊"
+
+  server:
+    start: |-
+      🟢 **Minecraft Server is now ONLINE!** 🟢
+
+      ⚔️ The server is up and running. Time to gather your friends, build amazing structures, and embark on new adventures. ⛏️
+      Happy crafting!
+
+      **Server Address:** `my.minecraft.server.com`
+
+      @everyone
+    stop: |-
+      🔴 **Minecraft Server is now OFFLINE!** 🔴
+
+      ⚔️ The server has shut down. It's time to rest, plan new builds, and prepare for upcoming adventures. ⛏️
+      Thanks for playing!
+
+      **Server Address:** `my.minecraft.server.com`
+
+      @everyone
+

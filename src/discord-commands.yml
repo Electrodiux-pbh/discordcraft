@@ -99,3 +99,7 @@ commands:
       already-enabled: The whitelist is already enabled!
       disabled: The whitelist has been disabled!
       already-disabled: The whitelist is already disabled!
+
+  configuration:
+    description: Configures the plugin
+    help: Help message for configure

@@ -17,7 +17,7 @@ public class MinecraftChatListener implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        String messageToSend = messageFormat.replace("%username%", event.getPlayer().getName())
+        String messageToSend = messageFormat.replace("%player%", event.getPlayer().getName())
                 .replace("%message%", event.getMessage());
         Discord.sendGlobalMessage(messageToSend);
     }

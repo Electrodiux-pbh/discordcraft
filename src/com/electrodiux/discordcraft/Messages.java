@@ -18,8 +18,6 @@ public class Messages {
         @Nonnull
         public static String getRawMessage(@Nonnull String key) {
                 String msg = DiscordCraft.getConfiguration().getString("messages." + key);
-                if (msg == null)
-                        return key;
                 return msg;
         }
 
