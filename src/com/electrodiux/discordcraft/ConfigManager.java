@@ -3,29 +3,26 @@ package com.electrodiux.discordcraft;
 import java.io.File;
 import java.io.IOException;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class ConfigManager {
 
-    private final JavaPlugin plugin;
     private FileConfiguration config;
     private File configFile;
 
-    public ConfigManager(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
+    public ConfigManager(String file) {
+        File dataFolder = DiscordCraft.instance().getDataFolder();
 
-    public void setupConfig() {
-        if (!plugin.getDataFolder().exists()) {
-            plugin.getDataFolder().mkdir();
+        if (!dataFolder.exists()) {
+            dataFolder.mkdir();
         }
 
-        configFile = new File(plugin.getDataFolder(), "config.yml");
+        configFile = new File(dataFolder, file);
 
         if (!configFile.exists()) {
-            plugin.saveResource("config.yml", false);
+            DiscordCraft.instance().saveResource(file, false);
         }
 
         config = YamlConfiguration.loadConfiguration(configFile);
@@ -33,6 +30,10 @@ public class ConfigManager {
 
     public FileConfiguration getConfig() {
         return config;
+    }
+
+    public ConfigurationSection getSection(String path) {
+        return config.getConfigurationSection(path);
     }
 
     public void saveConfig() {

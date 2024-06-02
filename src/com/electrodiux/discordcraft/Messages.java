@@ -17,7 +17,7 @@ public class Messages {
 
         @Nonnull
         public static String getRawMessage(@Nonnull String key) {
-                String msg = DiscordCraft.getConfiguration().getString("messages.en." + key);
+                String msg = DiscordCraft.getConfiguration().getString("messages." + key);
                 if (msg == null)
                         return key;
                 return msg;
@@ -25,7 +25,7 @@ public class Messages {
 
         @Nonnull
         public static String getRawMessage(@Nonnull String key, @Nonnull String varName, @Nullable String varValue) {
-                return getMessage(key).replace(varName, String.valueOf(varValue));
+                return getRawMessage(key).replace(varName, String.valueOf(varValue));
         }
 
         @Nonnull

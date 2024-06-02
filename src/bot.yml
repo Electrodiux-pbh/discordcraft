@@ -1,0 +1,6 @@
+token: ''
+server: 0 # Server ID
+global-channel: 0 # Global channel ID
+activity:
+  type: PLAYING
+  name: Minecraft Server

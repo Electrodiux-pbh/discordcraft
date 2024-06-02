@@ -12,10 +12,12 @@ public class SetGlobalChannel extends DiscordCommand {
     public SetGlobalChannel() {
         super("set-global-channel");
 
-        super.addOption(OptionType.CHANNEL, "channel",
-                "The channel to set as the global channel, if no channel is passed it will take current channel",
-                false)
-                .setChannelTypes(ChannelType.TEXT);
+        addOption(
+            OptionType.CHANNEL,
+            "channel",
+            "The channel to set as the global channel, if no channel is passed it will take current channel",
+            false
+        ).setChannelTypes(ChannelType.TEXT);
     }
 
     @Override
@@ -26,8 +28,7 @@ public class SetGlobalChannel extends DiscordCommand {
             return;
         }
 
-        TextChannel channel = event.getOption("channel") == null ? event.getChannel().asTextChannel()
-                : event.getOption("channel").getAsChannel().asTextChannel();
+        TextChannel channel = event.getOption("channel") == null ? event.getChannel().asTextChannel() : event.getOption("channel").getAsChannel().asTextChannel();
 
         if (channel == null) {
             event.reply("An error occurred while getting the channel!").setEphemeral(true).queue();
@@ -37,8 +38,7 @@ public class SetGlobalChannel extends DiscordCommand {
         Discord.setGlobalChannel(channel);
 
         event.reply("Global channel set to " + channel.getAsMention()).setEphemeral(true).queue();
-
-        Discord.sendGlobalMessage("This channels is being set as the global channel!");
+        channel.sendMessage("This channel is being set as the global channel!");
     }
 
 }

@@ -3,7 +3,7 @@ package com.electrodiux.discordcraft.commands.discord;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 
 import com.electrodiux.discordcraft.DiscordCraft;
 
@@ -13,50 +13,71 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 public abstract class DiscordCommand {
 
+    // Command status
+
+    private boolean enabled = true;
+
+    // Basic command information
+
     private String name = "";
     private String description = "";
-    private boolean enabled = true;
+    private String help = "";
+
+    // Command restrictions
+
     private boolean isAdministratorOnly = false;
 
-    private Collection<OptionData> options;
+    // Command options
 
-    private String configKey = "";
+    private Collection<OptionData> options = new ArrayList<>();
 
-    private boolean isGlobal = false;
+    // Command Configuration
+
+    private ConfigurationSection config = null;
+
+    // Constructors
 
     public DiscordCommand(String configName) {
 
-        options = new ArrayList<>();
+        // Initialize the configuration
 
-        configKey = "discord.bot.commands." + configName + ".";
+        config = DiscordCraft.instance().getDiscordCommandsConfigManager().getConfig()
+        .getConfigurationSection("commands." + configName);
 
-        name = this.getConfiguration().getString(configKey + "name",
-                configName.replaceAll("[^A-Za-z0-9 -]", "").toLowerCase());
-        description = this.getConfiguration().getString(configKey + "description", "");
-        enabled = this.getConfiguration().getBoolean(configKey + "enabled", true);
-        isAdministratorOnly = this.getConfiguration().getBoolean(configKey + "admin-only", false);
+        if (config == null) {
+            throw new IllegalArgumentException("Configuration section not found for command: " + configName);
+        }
+
+        // Load the configuration
+
+        enabled = getConfig().getBoolean("enabled", true);
+
+        name = getConfig().getString("command", configName.replaceAll("[^A-Za-z0-9 -]", "").toLowerCase());
+        description = getConfig().getString("description", null);
+        help = getConfig().getString("help", null);
+
+        isAdministratorOnly = getConfig().getBoolean("admin-only", false);
 
     }
 
-    public DiscordCommand(String name, String description, boolean enabled, boolean isAdministratorOnly) {
+    public DiscordCommand(String name, String description, String help, boolean enabled, boolean isAdministratorOnly) {
 
-        options = new ArrayList<>();
+        this.config = null;
+
+        this.enabled = enabled;
 
         this.name = name;
         this.description = description;
-        this.enabled = enabled;
+        this.help = help;
+
         this.isAdministratorOnly = isAdministratorOnly;
 
     }
 
     // Configuration methods
 
-    protected final String getConfigKey() {
-        return configKey;
-    }
-
-    protected final FileConfiguration getConfiguration() {
-        return DiscordCraft.getConfiguration();
+    protected final ConfigurationSection getConfig() {
+        return config;
     }
 
     // Command argument methods
@@ -86,6 +107,10 @@ public abstract class DiscordCommand {
         return description;
     }
 
+    public final String getHelp() {
+        return help;
+    }
+
     public final boolean isEnabled() {
         return enabled;
     }
@@ -98,8 +123,26 @@ public abstract class DiscordCommand {
         return options;
     }
 
-    public final boolean isGlobal() {
-        return isGlobal;
+    // Setters
+
+    protected final void setName(String name) {
+        this.name = name;
+    }
+
+    protected final void setDescription(String description) {
+        this.description = description;
+    }
+
+    protected final void setHelp(String help) {
+        this.help = help;
+    }
+
+    protected final void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    protected final void setAdministratorOnly(boolean isAdministratorOnly) {
+        this.isAdministratorOnly = isAdministratorOnly;
     }
 
     // Abstract methods

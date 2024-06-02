@@ -5,6 +5,7 @@ import javax.security.auth.login.LoginException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
 
 import com.electrodiux.discordcraft.commands.discord.CommandManager;
 import com.electrodiux.discordcraft.listeners.DiscordChatListener;
@@ -29,11 +30,15 @@ public class Discord {
     private static Guild server;
     private static TextChannel globalChannel;
 
+    private static ConfigurationSection config;
+
     // Discord setup
 
     public static boolean setup() {
 
-        String token = DiscordCraft.getConfiguration().getString("discord.bot.token");
+        config = DiscordCraft.instance().getBotConfigManager().getConfig();
+
+        String token = getBotConfig().getString("token");
 
         if (token == null || token.isBlank()) {
             DiscordCraft.logWarning("No bot token was found in the config! Please add one and restart the server.");
@@ -47,18 +52,18 @@ public class Discord {
             return false;
         }
 
-        server = getGuild(DiscordCraft.getConfiguration().getLong("discord.bot.server", 0));
+        server = getGuild(getBotConfig().getLong("server", 0));
 
         if (server == null) {
             DiscordCraft.logWarning("No server was found with the ID provided in the config! Please check the ID.");
             return false;
         }
 
-        globalChannel = getTextChannel(DiscordCraft.getConfiguration().getLong("discord.bot.global-channel", 0));
+        globalChannel = getTextChannel(getBotConfig().getLong("global-channel", 0));
 
         if (globalChannel == null) {
             DiscordCraft.logWarning("An error occurred while loading discord, please check your config and try again.");
-            return false;
+            return true;
         }
 
         return true;
@@ -75,8 +80,8 @@ public class Discord {
     }
 
     private static void configureActivity(JDABuilder builder) {
-        String activityType = DiscordCraft.getConfiguration().getString("discord.bot.activity.type");
-        String activityName = DiscordCraft.getConfiguration().getString("discord.bot.activity.name");
+        String activityType = getBotConfig().getString("activity.type");
+        String activityName = getBotConfig().getString("activity.name");
 
         Bukkit.getConsoleSender().sendMessage("Activity type: " + activityType);
         Bukkit.getConsoleSender().sendMessage("Activity name: " + activityName);
@@ -214,11 +219,15 @@ public class Discord {
 
     public static void setGlobalChannel(TextChannel channel) {
         globalChannel = channel;
-        DiscordCraft.getConfiguration().set("discord.bot.global-channel", channel.getIdLong());
+        getBotConfig().set("global-channel", channel.getIdLong());
     }
 
     public static int getDiscordColor(ChatColor color) {
         return DiscordCraft.getConfiguration().getInt("discord.colors." + color.name().toLowerCase(), 0);
+    }
+
+    public static ConfigurationSection getBotConfig() {
+        return config;
     }
 
     // Send messages
@@ -232,5 +241,5 @@ public class Discord {
     public static boolean isGlobalMessage(@Nonnull Message message) {
         return message.getChannel().getIdLong() == globalChannel.getIdLong();
     }
-
+    
 }

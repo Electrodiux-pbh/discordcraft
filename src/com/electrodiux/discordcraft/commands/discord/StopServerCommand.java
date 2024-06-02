@@ -16,15 +16,14 @@ public class StopServerCommand extends DiscordCommand {
     @Override
     public void onCommandInteraction(SlashCommandInteractionEvent event) {
 
-        String message = getConfiguration().getString(getConfigKey() + "message",
-                "Server will stop in %seconds% seconds.");
-        boolean isEphemeral = getConfiguration().getBoolean(getConfigKey() + "is-ephemeral", false);
-        boolean showTitle = getConfiguration().getBoolean(getConfigKey() + "show-title", true);
-        int delay = getConfiguration().getInt(getConfigKey() + "delay", 5);
+        String message = getConfig().getString("message", "Server will stop in %seconds% seconds.");
+        boolean isEphemeral = getConfig().getBoolean("is-ephemeral", false);
+        boolean showTitle = getConfig().getBoolean("show-title", true);
+        int delay = getConfig().getInt("delay", 5);
 
         if (delay < 5) {
             delay = 5;
-            getConfiguration().set(getConfigKey() + "delay", 5);
+            getConfig().set("delay", 5);
         }
 
         message = message.replace("%seconds%", String.valueOf(delay));
@@ -37,7 +36,9 @@ public class StopServerCommand extends DiscordCommand {
             }
         }
 
-        Bukkit.getScheduler().runTaskLater(DiscordCraft.getInstance(), this::stopServer, delay * 20);
+        DiscordCraft.logInfo("Stopping server in " + delay + " seconds, requested by " + event.getUser().getEffectiveName());
+
+        Bukkit.getScheduler().runTaskLater(DiscordCraft.instance(), this::stopServer, delay * 20); // Time in ticks
     }
 
     private void stopServer() {

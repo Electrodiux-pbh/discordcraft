@@ -23,11 +23,12 @@ public class CommandManager extends ListenerAdapter {
 
         try {
             // Add commands here
+            commands.add(new HelpCommand(this));
             commands.add(new PlayerListCommand());
             commands.add(new StopServerCommand());
             commands.add(new SetGlobalChannel());
         } catch (Exception e) {
-            DiscordCraft.getInstance().getLogger().severe("An error occurred while adding commands!");
+            DiscordCraft.instance().getLogger().severe("An error occurred while adding commands!");
             e.printStackTrace();
         }
 
@@ -54,7 +55,7 @@ public class CommandManager extends ListenerAdapter {
                         // Execute the command
                         command.onCommandInteraction(event);
                     } catch (Exception e) {
-                        DiscordCraft.getInstance().getLogger()
+                        DiscordCraft.instance().getLogger()
                                 .severe("An error occurred while executing command: " + command.getName());
                         e.printStackTrace();
                     }
@@ -75,11 +76,11 @@ public class CommandManager extends ListenerAdapter {
     private void registerCommands(Guild guild) {
         // Register commands
 
-        DiscordCraft.getInstance().getLogger().info("Registering commands for guild " + guild.getName());
+        DiscordCraft.instance().getLogger().info("Registering commands for guild " + guild.getName());
 
         if (guild.getIdLong() == DiscordCraft.getConfiguration().getLong("discord.bot.server")) {
 
-            DiscordCraft.getInstance().getLogger()
+            DiscordCraft.instance().getLogger()
                     .info("Guild matches main server, registering commands. (" + commands.size() + " commands)");
 
             // Register commands
@@ -88,7 +89,7 @@ public class CommandManager extends ListenerAdapter {
 
             for (DiscordCommand command : commands) {
 
-                DiscordCraft.getInstance().getLogger()
+                DiscordCraft.instance().getLogger()
                         .info("Registering command: " + command.getName() + " is enabled: "
                                 + command.isEnabled());
 
@@ -118,6 +119,8 @@ public class CommandManager extends ListenerAdapter {
         registerCommands(event.getGuild());
     }
 
+    // Command management
+
     public void addCommands(DiscordCommand... commands) {
         for (DiscordCommand command : commands) {
             this.commands.add(command);
@@ -126,6 +129,20 @@ public class CommandManager extends ListenerAdapter {
 
     public void addCommands(List<DiscordCommand> commands) {
         this.commands.addAll(commands);
+    }
+
+    public List<DiscordCommand> getCommands() {
+        return commands;
+    }
+
+    public DiscordCommand getCommand(String name) {
+        for (DiscordCommand command : commands) {
+            if (command.getName().equals(name)) {
+                return command;
+            }
+        }
+
+        return null;
     }
 
 }

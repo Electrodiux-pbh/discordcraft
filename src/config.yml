@@ -6,28 +6,6 @@ discord:
     activity:
       type: PLAYING
       name: Minecraft Server
-    commands:
-      playerlist:
-        enabled: true
-        name: playerlist
-        description: Shows the list of players online
-        admin-only: false
-        is-ephemeral: true
-      stop-server:
-        enabled: true
-        name: stop
-        description: Stops the minecraft server
-        admin-only: true
-        delay: 10 # The delay in seconds before the server stops (minimum 5 seconds)
-        message: The server is stopping in %seconds% seconds
-        is-ephemeral: true
-        show-title: true
-      set-global-channel:
-        enabled: true
-        name: globalchannel
-        admin-only: true
-        description: Sets the global channel
-        is-ephemeral: false
   
   notifications:
     server-start: true

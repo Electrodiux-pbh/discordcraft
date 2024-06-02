@@ -12,7 +12,12 @@ import com.electrodiux.discordcraft.listeners.PlayerEventsListener;
 
 public class DiscordCraft extends JavaPlugin {
 
-    private ConfigManager configManager;
+    // Configurations
+    
+    private ConfigManager mainConfig;
+    private ConfigManager botConfig;
+    private ConfigManager discordCommandsConfig;
+
     private PluginDescriptionFile descriptionFile = getDescription();
 
     private static DiscordCraft instance;
@@ -21,8 +26,9 @@ public class DiscordCraft extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        configManager = new ConfigManager(this);
-        configManager.setupConfig();
+        mainConfig = new ConfigManager("config.yml");
+        botConfig = new ConfigManager("bot.yml");
+        discordCommandsConfig = new ConfigManager("discord-commands.yml");
 
         if (!Discord.setup()) {
             Bukkit.getPluginManager().disablePlugin(this);
@@ -35,8 +41,9 @@ public class DiscordCraft extends JavaPlugin {
 
         Bukkit.getConsoleSender().sendMessage(
                 Messages.getMessage("plugin-enabled")
-                        .replace("%name%", descriptionFile.getName())
-                        .replace("%version%", descriptionFile.getVersion()));
+                .replace("%name%", descriptionFile.getName())
+                .replace("%version%", descriptionFile.getVersion())
+        );
 
     }
 
@@ -50,10 +57,11 @@ public class DiscordCraft extends JavaPlugin {
 
         Discord.shutdown();
 
-        configManager.saveConfig();
+        mainConfig.saveConfig();
+        botConfig.saveConfig();
+        discordCommandsConfig.saveConfig();
 
-        Bukkit.getConsoleSender()
-                .sendMessage(descriptionFile.getName() + " v" + descriptionFile.getVersion() + " has been disabled!");
+        DiscordCraft.logInfo(descriptionFile.getName() + " v" + descriptionFile.getVersion() + " has been disabled!");
 
         instance = null;
     }
@@ -63,14 +71,14 @@ public class DiscordCraft extends JavaPlugin {
     private void notifyStart() {
         boolean nofifyStart = DiscordCraft.getConfiguration().getBoolean("discord.notifications.server-start", true);
         if (nofifyStart) {
-            Discord.sendGlobalMessage(Messages.getMessage("server.start"));
+            Discord.sendGlobalMessage(Messages.getRawMessage("server.start"));
         }
     }
 
     private void notifyStop() {
         boolean nofifyStop = DiscordCraft.getConfiguration().getBoolean("discord.notifications.server-stop", true);
         if (nofifyStop) {
-            Discord.sendGlobalMessage(Messages.getMessage("server.stop"));
+            Discord.sendGlobalMessage(Messages.getRawMessage("server.stop"));
         }
     }
 
@@ -83,19 +91,25 @@ public class DiscordCraft extends JavaPlugin {
 
     // Getters
 
-    public ConfigManager getConfigManager() {
-        return configManager;
+    public ConfigManager getMainConfigManager() {
+        return mainConfig;
     }
 
-    public FileConfiguration getConfig() {
-        return configManager.getConfig();
+    public ConfigManager getBotConfigManager() {
+        return botConfig;
+    }
+
+    public ConfigManager getDiscordCommandsConfigManager() {
+        return discordCommandsConfig;
     }
 
     public static FileConfiguration getConfiguration() {
-        return instance.getConfig();
+        return instance().getMainConfigManager().getConfig();
     }
 
-    public static DiscordCraft getInstance() {
+    // Instance
+
+    public static DiscordCraft instance() {
         return instance;
     }
 
