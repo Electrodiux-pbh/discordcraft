@@ -79,7 +79,7 @@ public class PlayerListCommand extends DiscordCommand {
         String listHeaderMessage = getConfig().getString("messages.list-header", "List of %list_name% players (%player_count%):");
         String rowFormat = getConfig().getString("messages.list-row", "- **%player_name%**");
 
-        String listType = event.getOption("list") == null ? "" : event.getOption("list").getAsString();
+        String listType = event.getOption("list").getAsString();
         String listName = getConfig().getString("lists." + listType + ".name", StringUtils.capitalize(listType));
 
         List<String> players = null;
@@ -121,7 +121,7 @@ public class PlayerListCommand extends DiscordCommand {
             );
 
             for (String playerName : players) {
-                replyMessage.append("\n").append(rowFormat.replace("%player_name%", playerName));
+                replyMessage.append("\n").append(rowFormat.replace("%player%", playerName));
             }
 
             event.reply(replyMessage.toString()).setEphemeral(ephemeral).queue();

@@ -3,6 +3,7 @@ package com.electrodiux.discordcraft.commands.discord;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.electrodiux.discordcraft.Discord;
 import com.electrodiux.discordcraft.DiscordCraft;
 
 import net.dv8tion.jda.api.Permission;
@@ -26,6 +27,8 @@ public class CommandManager extends ListenerAdapter {
             commands.add(new HelpCommand(this));
             commands.add(new PlayerListCommand());
             commands.add(new StopServerCommand());
+            commands.add(new BanCommand());
+            commands.add(new PardonCommand());
             commands.add(new SetGlobalChannel());
         } catch (Exception e) {
             DiscordCraft.instance().getLogger().severe("An error occurred while adding commands!");
@@ -76,12 +79,11 @@ public class CommandManager extends ListenerAdapter {
     private void registerCommands(Guild guild) {
         // Register commands
 
-        DiscordCraft.instance().getLogger().info("Registering commands for guild " + guild.getName());
+        DiscordCraft.logInfo("Registering commands for guild " + guild.getName());
 
-        if (guild.getIdLong() == DiscordCraft.getConfiguration().getLong("discord.bot.server")) {
+        if (guild.getIdLong() == Discord.getBotConfig().getLong("server")) {
 
-            DiscordCraft.instance().getLogger()
-                    .info("Guild matches main server, registering commands. (" + commands.size() + " commands)");
+            DiscordCraft.logInfo("Guild matches main server, registering commands. (" + commands.size() + " commands)");
 
             // Register commands
 

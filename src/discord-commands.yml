@@ -14,7 +14,7 @@ commands:
         enabled: true
         name: Whitelisted
       operator:
-        enabled: false
+        enabled: true
         name: Operators
       banned:
         enabled: true
@@ -53,3 +53,27 @@ commands:
     message: 'Here is the list of commands:'
     row-format: '- **%command%**: %message%'
     admin-only: false
+
+  ban:
+    enabled: true
+    command: ban
+    description: Bans a player in the minecraft server
+    help: Help message for ban
+    admin-only: true
+    is-ephemeral: true
+    messages:
+      success: 'The player %player% has been banned because %reason%!'
+      already-banned: 'The player %player% is already banned!'
+      not-found: 'The player %player% was not found!'
+    default-reason: 'You have been banned from the server!'
+
+  pardon:
+    enabled: true
+    command: pardon
+    description: Unbans a player in the minecraft server
+    help: Help message for pardon
+    admin-only: true
+    is-ephemeral: true
+    messages:
+      success: 'The player %player% has been unbanned!'
+      not-banned: 'The player %player% is not banned!'
