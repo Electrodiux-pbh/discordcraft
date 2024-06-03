@@ -1,38 +1,42 @@
 messages:
   plugin-enabled: '%name% v%version% has been enabled!'
-  
+
   chat:
     minecraft-format: '[%guild% -> %channel%] &e<%username%> &f%message%&7%attachments%'
-    minecraft-edited-format: '[%guild% -> %channel%] &e<%username%> &f%message%&7%attachments%
-      &8&l(Edited)'
+    minecraft-edited-format: '[%guild% -> %channel%] &e<%username%> &f%message%&7%attachments% &8&l(Edited)'
     attachment-spoiler: ' (spoiler)'
     attachment-separator: ', '
     discord-format: '**<%player%>:** %message%'
-  
+
   player:
-    joined: '**%player%** se ha metido a la droga 😁 🎉'
-    left: '**%player%** se ha ido 😭'
-    death: 'Jajajaja se murío el subnormal de %player% porque `%death_message%`'
-    murder: 'El cabronazo de **%killer%** ha matado a **%victim%** 😈'
-  
+    joined: '**%player%** has joined the game 😁 🎉'
+    left: '**%player%** has left the game 😭'
+    death: 'Haha, %player% died because `%death_message%`'
+    murder: '**%killer%** has killed **%victim%** 😈'
+
   custom-death-messages:
-    lava: '**%player%** se ha caído en lava. 🔥🥵'
-    fire: '**%player%** se ha quemado. 🔥🥵'
-    fall: '**%player%** se ha caído de una gran altura. 🪂✨'
-    void: '**%player%** se ha caído al vacío. 🌌🪂'
-    drowing: '**%player%** se ha ahogado. 🌊'
-  
+    lava: '**%player%** fell into lava. 🔥🥵'
+    fire: '**%player%** burned to death. 🔥🥵'
+    fall: '**%player%** fell from a high place. 🪂✨'
+    void: '**%player%** fell into the void. 🌌🪂'
+    drowning: '**%player%** drowned. 🌊'
+
   server:
-    start: "🟢 **PíoCraft se ha ABIERTO!** 🟢\n\n⚔️ El server se acaba de encender.\
-      \ Es hora de llamar a tus amigos, conectarse, hacer construcciones épicas, y\
-      \ embarcarse en nuevas aventuras. ⛏️ \nHappy Crafting! <:pio:1246938937230889041>\
-      \ \n\n**IP del Servidor:** `mc.electrodiux.com`\n\n<@&1246836960954417173>"
+    start: |-
+      🟢 **The server has STARTED!** 🟢
+
+      ⚔️ The server is now online. Gather your friends, start building epic structures, and embark on new adventures. ⛏️
+      Happy Crafting!
+
+      **Server IP:** `mc.yourserver.com`
+
+      <@&your-role-id>
     stop: |-
-      🔴 **PíoCraft se ha CERRADO!** 🔴
+      🔴 **The server has SHUT DOWN!** 🔴
 
-      ⚔️ El server se acaba de apagar. Es momento de descansar, planificar nuevas construcciones, y prepararse para las próximas aventuras. ⛏️
-      Gracias por jugar! <:pio:1246938937230889041>
+      ⚔️ The server is now offline. Time to rest, plan new builds, and prepare for future adventures. ⛏️
+      Thank you for playing!
 
-      **IP del Servidor:** `mc.electrodiux.com`
+      **Server IP:** `mc.yourserver.com`
 
-      <@&1246836960954417173>
+      <@&your-role-id>
