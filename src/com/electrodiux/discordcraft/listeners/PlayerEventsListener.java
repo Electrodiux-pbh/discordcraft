@@ -109,10 +109,6 @@ public class PlayerEventsListener implements Listener {
 
             // Check if the damager is a player
             if (damager instanceof Player) {
-                Player damagerPlayer = ((Player) damager);
-
-                // This event triggers on damage, not death, so we need to store this information
-                // and use it in the EntityDeathEvent
                 damagedPlayer.setLastDamageCause(event);
             }
         }
