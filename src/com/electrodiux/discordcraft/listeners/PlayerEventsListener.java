@@ -55,8 +55,6 @@ public class PlayerEventsListener implements Listener {
                 deathMessage = deathMessage.replace("%player%", player.getName());
             }
 
-            deathMessage = deathMessage.replace(player.getName(), "**" + player.getName() + "**"); // Bold the player name
-
             String finalMessage = deathMessageFormat
             .replace("%player%", player.getName())
             .replace("%death_message%",  deathMessage);
