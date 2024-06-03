@@ -30,7 +30,11 @@ public class CommandManager extends ListenerAdapter {
             commands.add(new BanCommand());
             commands.add(new PardonCommand());
             commands.add(new WhitelistCommand());
-            commands.add(new SetGlobalChannel());
+
+            // Unify all to one command
+            commands.add(new ChannelAddCommand());
+            commands.add(new ChannelRemoveCommand());
+            commands.add(new ChannelConfigCommand());
         } catch (Exception e) {
             DiscordCraft.instance().getLogger().severe("An error occurred while adding commands!");
             e.printStackTrace();
@@ -80,10 +84,9 @@ public class CommandManager extends ListenerAdapter {
     private void registerCommands(Guild guild) {
         // Register commands
 
-        DiscordCraft.logInfo("Registering commands for guild " + guild.getName());
-
         if (guild.getIdLong() == Discord.getBotConfig().getLong("server")) {
-
+            
+            DiscordCraft.logInfo("Registering commands for guild " + guild.getName());
             DiscordCraft.logInfo("Guild matches main server, registering commands. (" + commands.size() + " commands)");
 
             // Register commands
@@ -92,9 +95,7 @@ public class CommandManager extends ListenerAdapter {
 
             for (DiscordCommand command : commands) {
 
-                DiscordCraft.instance().getLogger()
-                        .info("Registering command: " + command.getName() + " is enabled: "
-                                + command.isEnabled());
+                DiscordCraft.logInfo("Registering command: " + command.getName() + " is enabled: " + command.isEnabled());
 
                 if (command.isEnabled()) {
                     SlashCommandData data = Commands.slash(command.getName(), command.getDescription());

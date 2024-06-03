@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.electrodiux.discordcraft.Discord;
+import com.electrodiux.discordcraft.LinkedChannel;
 import com.electrodiux.discordcraft.Messages;
 
 import net.dv8tion.jda.api.entities.Message;
@@ -49,37 +50,58 @@ public class DiscordChatListener extends ListenerAdapter {
     // Message in minecraft chat from discord
 
     private void onMessage(GenericMessageEvent event, User author, Message message, String format) {
-        if (!checkMessage(event, author))
+
+        if (event.getChannelType() == ChannelType.PRIVATE) { // ignore private messages
             return;
+        }
 
-        // check if message is a global message
-        if (Discord.isGlobalMessage(message)) {
-            // normal message broadcast
+        LinkedChannel linkedChannel = Discord.getLinkedChannel(message.getChannel().asTextChannel());
 
-            String messageWithoutAttachments = format
-                    .replace("%username%", author.getEffectiveName())
-                    .replace("%message%", message.getContentDisplay());
-
-            String[] parts = messageWithoutAttachments.split("%attachments%", 2);
-
-            ComponentBuilder finalMessageBuilder = new ComponentBuilder("");
-
-            if (parts.length > 0) {
-                finalMessageBuilder.append(parts[0]);
-            }
-
-            if (parts.length >= 2) { // if there is a %attachments% placeholder
-                ComponentBuilder attachmentsBuilder = getAttachmentsComponent(message);
-                finalMessageBuilder.append(attachmentsBuilder.create());
-
-                finalMessageBuilder.append(parts[1]);
-            }
-
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                player.spigot().sendMessage(finalMessageBuilder.create());
-            }
-
+        if (linkedChannel == null || !linkedChannel.canSendDiscordMessages()) { // ignore messages from channels that are not linked
             return;
+        }
+
+        if (!linkedChannel.canSendBotMessages() && author.isBot()) { // ignore bot messages if not allowed
+            return;
+        }
+
+        if (!linkedChannel.canSendDiscordSystemMessages() && author.isSystem()) { // ignore system messages if not allowed
+            return;
+        }
+
+        if (author.getIdLong() == Discord.getSelfUser().getIdLong()) { // ignore messages from the bot itself
+            return;
+        }
+
+        // normal message broadcast
+
+        String messageWithoutAttachments = format // replace placeholders except for attachments
+                .replace("%username%", author.getEffectiveName())
+                .replace("%guild%", message.getGuild().getName())
+                .replace("%channel%", message.getChannel().getName())
+                .replace("%message%", message.getContentDisplay());
+
+        // Replace attachments placeholder
+
+        String[] parts = messageWithoutAttachments.split("%attachments%", 2);
+
+        ComponentBuilder finalMessageBuilder = new ComponentBuilder("");
+
+        if (parts.length > 0) {
+            finalMessageBuilder.append(parts[0]);
+        }
+
+        if (parts.length >= 2) { // if there is a %attachments% placeholder
+            ComponentBuilder attachmentsBuilder = getAttachmentsComponent(message);
+            finalMessageBuilder.append(attachmentsBuilder.create());
+
+            finalMessageBuilder.append(parts[1]);
+        }
+
+        // Send message to all online players
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.spigot().sendMessage(finalMessageBuilder.create());
         }
     }
 
@@ -117,15 +139,6 @@ public class DiscordChatListener extends ListenerAdapter {
         }
 
         return attachmentsBuilder;
-    }
-
-    // Check valid message to send
-
-    private boolean checkMessage(GenericMessageEvent event, User author) {
-        if (author.isBot() || author.isSystem() || author.getIdLong() == event.getJDA().getSelfUser().getIdLong()) {
-            return false;
-        }
-        return true;
     }
 
 }

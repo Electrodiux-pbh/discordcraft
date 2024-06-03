@@ -1,69 +1,38 @@
-discord:
-  notifications:
-    server-start: true
-    server-stop: true
-    
-    connection-messages: true
-    player-death-messages: true
-  
-  colors:
-    # color values were taken from https://htmlcolorcodes.com/minecraft-color-codes/
-    black: 65793 # Color with value 0 is means no color, so we use a very dark gray instead
-    dark_blue: 170
-    dark_green: 43520
-    dark_aqua: 43690
-    dark_red: 11141120
-    dark_purple: 11141290
-    gold: 16755200
-    gray: 11184810
-    dark_gray: 5592405
-    blue: 5592575
-    green: 5635925
-    aqua: 5636095
-    red: 16733525
-    light_purple: 16733695
-    yellow: 16777045
-    white: 16777215
-
 messages:
   plugin-enabled: '%name% v%version% has been enabled!'
   
   chat:
-    minecraft-format: '&e<%username%> &f%message%&7%attachments%'
-    minecraft-edited-format: '&e<%username%> &f%message%&7%attachments% &8&l(Edited)'
+    minecraft-format: '[%guild% -> %channel%] &e<%username%> &f%message%&7%attachments%'
+    minecraft-edited-format: '[%guild% -> %channel%] &e<%username%> &f%message%&7%attachments%
+      &8&l(Edited)'
     attachment-spoiler: ' (spoiler)'
     attachment-separator: ', '
     discord-format: '**<%player%>:** %message%'
   
   player:
-    connected: "**%player%** has connected to the server. 😁 🎉"
-    disconnected: "**%player%** has disconnected from the server. 😭"
-    death: "[%death_message%] 💀"
-
+    joined: '**%player%** se ha metido a la droga 😁 🎉'
+    left: '**%player%** se ha ido 😭'
+    death: 'Jajajaja se murío el subnormal de %player% porque `%death_message%`'
+    murder: 'El cabronazo de **%killer%** ha matado a **%victim%** 😈'
+  
   custom-death-messages:
-    lava: "**%player%** fell into lava. 🔥🥵"
-    fire: "**%player%** burned to death. 🔥🥵"
-    fall: "**%player%** fell from a high place. 🪂"
-    void: "**%player%** fell into the void. ✨"
-    drowing: "**%player%** drowned. 🌊"
-
+    lava: '**%player%** se ha caído en lava. 🔥🥵'
+    fire: '**%player%** se ha quemado. 🔥🥵'
+    fall: '**%player%** se ha caído de una gran altura. 🪂✨'
+    void: '**%player%** se ha caído al vacío. 🌌🪂'
+    drowing: '**%player%** se ha ahogado. 🌊'
+  
   server:
-    start: |-
-      🟢 **Minecraft Server is now ONLINE!** 🟢
-
-      ⚔️ The server is up and running. Time to gather your friends, build amazing structures, and embark on new adventures. ⛏️
-      Happy crafting!
-
-      **Server Address:** `my.minecraft.server.com`
-
-      @everyone
+    start: "🟢 **PíoCraft se ha ABIERTO!** 🟢\n\n⚔️ El server se acaba de encender.\
+      \ Es hora de llamar a tus amigos, conectarse, hacer construcciones épicas, y\
+      \ embarcarse en nuevas aventuras. ⛏️ \nHappy Crafting! <:pio:1246938937230889041>\
+      \ \n\n**IP del Servidor:** `mc.electrodiux.com`\n\n<@&1246836960954417173>"
     stop: |-
-      🔴 **Minecraft Server is now OFFLINE!** 🔴
+      🔴 **PíoCraft se ha CERRADO!** 🔴
 
-      ⚔️ The server has shut down. It's time to rest, plan new builds, and prepare for upcoming adventures. ⛏️
-      Thanks for playing!
+      ⚔️ El server se acaba de apagar. Es momento de descansar, planificar nuevas construcciones, y prepararse para las próximas aventuras. ⛏️
+      Gracias por jugar! <:pio:1246938937230889041>
 
-      **Server Address:** `my.minecraft.server.com`
+      **IP del Servidor:** `mc.electrodiux.com`
 
-      @everyone
-
+      <@&1246836960954417173>

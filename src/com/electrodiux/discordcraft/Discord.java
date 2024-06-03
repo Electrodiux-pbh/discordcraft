@@ -1,10 +1,11 @@
 package com.electrodiux.discordcraft;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.electrodiux.discordcraft.commands.discord.CommandManager;
@@ -17,6 +18,7 @@ import net.dv8tion.jda.api.entities.Activity.ActivityType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
@@ -28,9 +30,10 @@ public class Discord {
     private static JDA api;
 
     private static Guild server;
-    private static TextChannel globalChannel;
 
     private static ConfigurationSection config;
+
+    private static List<LinkedChannel> linkedChannels;
 
     // Discord setup
 
@@ -59,11 +62,11 @@ public class Discord {
             return false;
         }
 
-        globalChannel = getTextChannel(getBotConfig().getLong("global-channel", 0));
+        linkedChannels = LinkedChannel.loadAllChannels();
 
-        if (globalChannel == null) {
-            DiscordCraft.logWarning("An error occurred while loading discord, please check your config and try again.");
-            return true;
+        DiscordCraft.logInfo("Loaded " + linkedChannels.size() + " linked channels.");
+        for (LinkedChannel linkedChannel : linkedChannels) {
+            DiscordCraft.logInfo("Loaded linked channel: " + linkedChannel.getChannel().getName() + " in guild: " + linkedChannel.getChannel().getGuild().getName());
         }
 
         return true;
@@ -209,37 +212,77 @@ public class Discord {
         return api;
     }
 
-    public static Guild getServer() {
+    public static Guild getGuild() {
         return server;
-    }
-
-    public static TextChannel getGlobalChannel() {
-        return globalChannel;
-    }
-
-    public static void setGlobalChannel(TextChannel channel) {
-        globalChannel = channel;
-        getBotConfig().set("global-channel", channel.getIdLong());
-    }
-
-    public static int getDiscordColor(ChatColor color) {
-        return DiscordCraft.getConfiguration().getInt("discord.colors." + color.name().toLowerCase(), 0);
     }
 
     public static ConfigurationSection getBotConfig() {
         return config;
     }
 
-    // Send messages
+    // Linked channels
 
-    public static void sendGlobalMessage(String message) {
-        if (globalChannel != null) {
-            globalChannel.sendMessage(message).queue();
+    public static void addLinkedChannel(TextChannel channel) {
+        if (isLinkedChannel(channel)) {
+            return;
+        }
+
+        linkedChannels.add(LinkedChannel.create(channel));
+
+        DiscordCraft.instance().getBotConfigManager().saveConfig();
+    }
+
+    public static void removeLinkedChannel(TextChannel channel) {
+        for (LinkedChannel linkedChannel : linkedChannels) {
+            if (linkedChannel.getChannel().getIdLong() == channel.getIdLong()) {
+
+                linkedChannel.delete();
+                linkedChannels.remove(linkedChannel);
+
+                DiscordCraft.instance().getBotConfigManager().saveConfig();
+
+                return;
+            }
         }
     }
 
-    public static boolean isGlobalMessage(@Nonnull Message message) {
-        return message.getChannel().getIdLong() == globalChannel.getIdLong();
+    public static boolean isLinkedChannel(TextChannel channel) {
+        for (LinkedChannel linkedChannel : linkedChannels) {
+            if (linkedChannel.getChannel().getIdLong() == channel.getIdLong()) {
+                return true;
+            }
+        }
+
+        return false;
     }
-    
+
+    public static List<LinkedChannel> getLinkedChannels() {
+        return linkedChannels;
+    }
+
+    public static LinkedChannel getLinkedChannel(TextChannel channel) {
+        for (LinkedChannel linkedChannel : linkedChannels) {
+            if (linkedChannel.getChannel().getIdLong() == channel.getIdLong()) {
+                return linkedChannel;
+            }
+        }
+
+        return null;
+    }
+
+    public static boolean isMessageInALinkedChannel(@Nonnull Message message) {
+        for (LinkedChannel linkedChannel : linkedChannels) {
+            if (linkedChannel.getChannel().getIdLong() == message.getChannel().getIdLong()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Self user
+
+    public static SelfUser getSelfUser() {
+        return api.getSelfUser();
+    }
+
 }

@@ -39,11 +39,9 @@ public class DiscordCraft extends JavaPlugin {
 
         notifyStart();
 
-        Bukkit.getConsoleSender().sendMessage(
-                Messages.getMessage("plugin-enabled")
-                .replace("%name%", descriptionFile.getName())
-                .replace("%version%", descriptionFile.getVersion())
-        );
+        Bukkit.getConsoleSender().sendMessage(Messages.getMessage("plugin-enabled")
+        .replace("%name%", descriptionFile.getName())
+        .replace("%version%", descriptionFile.getVersion()) );
 
     }
 
@@ -69,16 +67,18 @@ public class DiscordCraft extends JavaPlugin {
     // Notifications
 
     private void notifyStart() {
-        boolean nofifyStart = DiscordCraft.getConfiguration().getBoolean("discord.notifications.server-start", true);
-        if (nofifyStart) {
-            Discord.sendGlobalMessage(Messages.getRawMessage("server.start"));
+        for (LinkedChannel linkedChannel : Discord.getLinkedChannels()) {
+            if (linkedChannel.canSendServerStartMessages()) {
+                linkedChannel.getChannel().sendMessage(Messages.getRawMessage("server.start")).queue();
+            }
         }
     }
 
     private void notifyStop() {
-        boolean nofifyStop = DiscordCraft.getConfiguration().getBoolean("discord.notifications.server-stop", true);
-        if (nofifyStop) {
-            Discord.sendGlobalMessage(Messages.getRawMessage("server.stop"));
+        for (LinkedChannel linkedChannel : Discord.getLinkedChannels()) {
+            if (linkedChannel.canSendServerStopMessages()) {
+                linkedChannel.getChannel().sendMessage(Messages.getRawMessage("server.stop")).queue();
+            }
         }
     }
 

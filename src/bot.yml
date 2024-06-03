@@ -1,6 +1,21 @@
 token: ''
-server: 0 # Server ID
-global-channel: 0 # Global channel ID
+server: 0
 activity:
   type: PLAYING
   name: Minecraft Server
+
+channel-defaults:
+  minecraft-chat-messages: true
+  player-connect-messages: true
+  player-disconnect-messages: true
+  player-death-messages: true
+  player-murder-messages: true
+  discord-messages: true
+  discord-bot-messages: true
+  discord-system-messages: true
+  player-join-messages: true
+  player-leave-messages: true
+  server-start: true
+  server-stop: true
+
+channels:
