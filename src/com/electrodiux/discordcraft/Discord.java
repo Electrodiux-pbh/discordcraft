@@ -27,13 +27,15 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 public class Discord {
 
-    private static JDA api;
+    private static JDA jda;
 
     private static Guild server;
 
     private static ConfigurationSection config;
 
     private static List<LinkedChannel> linkedChannels;
+
+    private static TextChannel logChannel;
 
     // Discord setup
 
@@ -51,18 +53,19 @@ public class Discord {
         boolean settedUp = setputJDA(token);
 
         if (!settedUp) {
-            DiscordCraft.logWarning("An error occurred while setting up Discord!");
+            DiscordCraft.logWarning("An error occurred while setting up Discord JDA!");
             return false;
         }
 
         server = getGuild(getBotConfig().getLong("server", 0));
 
         if (server == null) {
-            DiscordCraft.logWarning("No server was found with the ID provided in the config! Please check the ID.");
-            return false;
+            DiscordCraft.logWarning("No server was found with the ID provided in the config! Please check the ID or run /setup command on Discord.");
         }
 
         linkedChannels = LinkedChannel.loadAllChannels();
+
+        logChannel = getTextChannel(getBotConfig().getLong("log-channel", 0));
 
         DiscordCraft.logInfo("Loaded " + linkedChannels.size() + " linked channels.");
         for (LinkedChannel linkedChannel : linkedChannels) {
@@ -83,6 +86,12 @@ public class Discord {
     }
 
     private static void configureActivity(JDABuilder builder) {
+        boolean showActivity = getBotConfig().getBoolean("activity.show", true);
+
+        if (!showActivity) {
+            return;
+        }
+
         String activityType = getBotConfig().getString("activity.type");
         String activityName = getBotConfig().getString("activity.name");
 
@@ -111,12 +120,12 @@ public class Discord {
             builder.addEventListeners(new DiscordChatListener());
             builder.addEventListeners(new CommandManager());
 
-            api = builder.build();
-            if (api == null) {
+            jda = builder.build();
+            if (jda == null) {
                 throw new LoginException("Couldn't login in to Discord!");
             }
 
-            api.awaitReady();
+            jda.awaitReady();
 
             return true;
         } catch (Exception e) {
@@ -129,8 +138,8 @@ public class Discord {
     // Shutdown
 
     public static void shutdown() {
-        if (api != null) {
-            api.shutdown();
+        if (jda != null) {
+            jda.shutdown();
         }
     }
 
@@ -181,7 +190,7 @@ public class Discord {
     public static Guild getGuild(long id) {
 
         if (id != 0) {
-            Guild guild = api.getGuildById(id);
+            Guild guild = jda.getGuildById(id);
             if (guild != null) {
                 Bukkit.getConsoleSender().sendMessage("Found guild: " + guild.getName());
                 return guild;
@@ -209,7 +218,7 @@ public class Discord {
     // Getters
 
     public static JDA getJDA() {
-        return api;
+        return jda;
     }
 
     public static Guild getGuild() {
@@ -279,10 +288,16 @@ public class Discord {
         return false;
     }
 
+    // Log channel
+
+    public static TextChannel getLogChannel() {
+        return logChannel;
+    }
+
     // Self user
 
     public static SelfUser getSelfUser() {
-        return api.getSelfUser();
+        return jda.getSelfUser();
     }
 
 }

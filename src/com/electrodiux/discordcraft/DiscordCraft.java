@@ -2,97 +2,140 @@ package com.electrodiux.discordcraft;
 
 import java.util.logging.Logger;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
+import com.electrodiux.discordcraft.links.AccountLink;
 import com.electrodiux.discordcraft.listeners.MinecraftChatListener;
 import com.electrodiux.discordcraft.listeners.PlayerEventsListener;
 
-public class DiscordCraft extends JavaPlugin {
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
+public class DiscordCraft extends JavaPlugin {
+    
+    // Instance
+
+    private static DiscordCraft instance;
+    
+    // Flags
+
+    private boolean isDiscordCraftEnabled = false;
+    
     // Configurations
     
     private ConfigManager mainConfig;
+    private ConfigManager messagesConfig;
     private ConfigManager botConfig;
     private ConfigManager discordCommandsConfig;
-
-    private PluginDescriptionFile descriptionFile = getDescription();
-
-    private static DiscordCraft instance;
 
     @Override
     public void onEnable() {
         instance = this;
 
-        mainConfig = new ConfigManager("config.yml");
-        botConfig = new ConfigManager("bot.yml");
-        discordCommandsConfig = new ConfigManager("discord-commands.yml");
+        // Load Configurations
+        mainConfig = new ConfigManager("config.yml", true);
+        messagesConfig = new ConfigManager("messages.yml", true);
+        botConfig = new ConfigManager("bot.yml", true);
+        discordCommandsConfig = new ConfigManager("discord-commands.yml", true);
 
+        // Setup Messages
+        Messages.setup();
+
+        // Load Discord JDA
         if (!Discord.setup()) {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
-        registerListeners();
+        AccountLink.initialize();
 
-        notifyStart();
+        // Register Listeners
+        registerSpigotListeners();
 
-        Bukkit.getConsoleSender().sendMessage(Messages.getMessage("plugin-enabled")
-        .replace("%name%", descriptionFile.getName())
-        .replace("%version%", descriptionFile.getVersion()) );
+        isDiscordCraftEnabled = true;
 
+        // Start Messages
+        serverStartMessages();
+
+        DiscordCraft.logInfo(getDescription().getName() + " v" + getDescription().getVersion() + " has been enabled!");
     }
 
     @Override
     public void onDisable() {
-        if (!isDiscordCraftEnabled()) {
+        // Check if DiscordCraft is enabled
+        if (!DiscordCraft.isDiscordCraftEnabled()) {
             return;
         }
 
-        notifyStop();
+        // Stop Messages
+        serverStopMessages();
 
+        // Save Account Links
+        AccountLink.save();
+
+        // Shutdown Discord JDA
         Discord.shutdown();
 
+        // Save Configurations
         mainConfig.saveConfig();
+        messagesConfig.saveConfig();
         botConfig.saveConfig();
         discordCommandsConfig.saveConfig();
 
-        DiscordCraft.logInfo(descriptionFile.getName() + " v" + descriptionFile.getVersion() + " has been disabled!");
+        // Disable
+        DiscordCraft.logInfo(getDescription().getName() + " v" + getDescription().getVersion() + " has been disabled!");
 
         instance = null;
+        isDiscordCraftEnabled = false;
     }
 
     // Notifications
 
-    private void notifyStart() {
+    private void serverStartMessages() {
+        String message = Messages.getMessage("server.start");
+
         for (LinkedChannel linkedChannel : Discord.getLinkedChannels()) {
             if (linkedChannel.canSendServerStartMessages()) {
-                linkedChannel.getChannel().sendMessage(Messages.getRawMessage("server.start")).queue();
+                linkedChannel.getChannel().sendMessage(message).queue();
             }
         }
     }
 
-    private void notifyStop() {
+    private void serverStopMessages() {
+        String message = Messages.getMessage("server.stop");
+
         for (LinkedChannel linkedChannel : Discord.getLinkedChannels()) {
             if (linkedChannel.canSendServerStopMessages()) {
-                linkedChannel.getChannel().sendMessage(Messages.getRawMessage("server.stop")).queue();
+                linkedChannel.getChannel().sendMessage(message).queue();
             }
         }
+    }
+
+    // Instance
+
+    public static DiscordCraft instance() {
+        return instance;
     }
 
     // Listeners
 
-    public void registerListeners() {
+    public void registerSpigotListeners() {
         Bukkit.getPluginManager().registerEvents(new MinecraftChatListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerEventsListener(), this);
     }
 
-    // Getters
+    // Configurations
 
     public ConfigManager getMainConfigManager() {
         return mainConfig;
+    }
+
+    public ConfigManager getMessagesConfigManager() {
+        return messagesConfig;
     }
 
     public ConfigManager getBotConfigManager() {
@@ -107,30 +150,124 @@ public class DiscordCraft extends JavaPlugin {
         return instance().getMainConfigManager().getConfig();
     }
 
-    // Instance
-
-    public static DiscordCraft instance() {
-        return instance;
-    }
-
     // Checkers
 
     public static boolean isDiscordCraftEnabled() {
-        return instance != null;
+        return instance != null && instance.isDiscordCraftEnabled;
     }
 
     // Logging
 
-    public static Logger getPluginLogger() {
+    public static Logger getDiscordCraftLogger() {
+        if (instance == null) {
+            return null;
+        }
         return instance.getLogger();
     }
 
-    public static void logWarning(String message) {
-        getPluginLogger().warning(message);
+    public static void logInfo(@NotNull String message) {
+        if (message == null) {
+            return;
+        }
+        
+        Logger logger = getDiscordCraftLogger();
+        if (logger != null) {
+            logger.info(message);
+        }
     }
 
-    public static void logInfo(String message) {
-        getPluginLogger().info(message);
+    public static void logWarning(@NotNull String message) {
+        if (message == null || message.isBlank()) {
+            return;
+        }
+
+        Logger logger = getDiscordCraftLogger();
+        if (logger != null) {
+            logger.warning(message);
+        }
+    }
+
+    public static void logSevere(@NotNull String message) {
+        if (message == null || message.isBlank()) {
+            return;
+        }
+
+        Logger logger = getDiscordCraftLogger();
+        if (logger != null) {
+            logger.severe(message);
+        }
+    }
+
+    public static void logException(@NotNull Exception e, @Nullable String message) {
+        if (e == null) {
+            return;
+        }
+
+        Logger logger = getDiscordCraftLogger();
+        if (logger != null) {
+            if (message != null && message.isBlank()) {
+                logger.severe(message);
+            }
+            e.printStackTrace();
+        }
+    }
+
+    // Discord Logging
+
+    public static void discordLogInfo(@NotNull String message) {
+        if (message == null || message.isBlank()) {
+            return;
+        }
+
+        TextChannel logChannel = Discord.getLogChannel();
+        if (logChannel != null) {
+            logChannel.sendMessage("[INFO]: " + message).queue();
+        }
+
+        logInfo(message);
+    }
+
+    public static void discordLogWarning(@NotNull String message) {
+        if (message == null || message.isBlank()) {
+            return;
+        }
+
+        TextChannel logChannel = Discord.getLogChannel();
+        if (logChannel != null) {
+            logChannel.sendMessage("[WARNING]: " + message).queue();
+        }
+
+        logWarning(message);
+    }
+
+    public static void discordLogSevere(@NotNull String message) {
+        if (message == null || message.isBlank()) {
+            return;
+        }
+
+        TextChannel logChannel = Discord.getLogChannel();
+        if (logChannel != null) {
+            logChannel.sendMessage("[ERROR]: " + message).queue();
+        }
+
+        logSevere(message);
+    }
+
+    public static void discordLogException(@NotNull Exception e, @NotNull String message) {
+        if (e == null) {
+            return;
+        }
+
+        TextChannel logChannel = Discord.getLogChannel();
+        if (logChannel != null) {
+            if (message != null && !message.isBlank()) {
+                logChannel.sendMessage("[ERROR]: " + message + " (Check Console for more Details)").queue();
+            } else {
+                logChannel.sendMessage("[ERROR]: An internal server error occurred! (Check Console for more Details)").queue();
+            }
+        }
+
+        logException(e, message);
     }
 
 }

@@ -12,13 +12,11 @@ public class MinecraftChatListener implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        String messageFormat = Messages.getMessage("chat.discord-format");
-
-        String messageToSend = messageFormat.replace("%player%", event.getPlayer().getName()) .replace("%message%", event.getMessage());
+        String message = Messages.getMessage("chat.discord-format", "player", event.getPlayer(), "message", event.getMessage());
         
         for (LinkedChannel linkedChannel : Discord.getLinkedChannels()) {
             if (linkedChannel.canSendMinecraftChatMessages()) {
-                linkedChannel.getChannel().sendMessage(messageToSend).queue();
+                linkedChannel.getChannel().sendMessage(message).queue();
             }
         }
     }

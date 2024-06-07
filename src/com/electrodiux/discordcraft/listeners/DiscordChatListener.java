@@ -121,7 +121,7 @@ public class DiscordChatListener extends ListenerAdapter {
                 Attachment attachment = attachmentns.get(i);
 
                 if (i != 0) {
-                    attachmentsBuilder.append(Messages.getMessage("chat.attachment-separator"));
+                    attachmentsBuilder.append(Messages.getMessageWithDefault("chat.attachment-separator", ", "));
                 }
 
                 TextComponent attachmentComponent = new TextComponent(attachment.getFileName());
@@ -130,7 +130,7 @@ public class DiscordChatListener extends ListenerAdapter {
                 attachmentsBuilder.append(attachmentComponent);
 
                 if (attachment.isSpoiler()) {
-                    attachmentsBuilder.append(Messages.getMessage("chat.attachment-spoiler"));
+                    attachmentsBuilder.append(Messages.getMessageWithDefault("chat.attachment-spoiler", " (spoiler)"));
                 }
 
             }

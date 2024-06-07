@@ -3,8 +3,13 @@ package com.electrodiux.discordcraft.commands.discord;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.electrodiux.discordcraft.Discord;
 import com.electrodiux.discordcraft.DiscordCraft;
+import com.electrodiux.discordcraft.Messages;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -23,28 +28,30 @@ public class CommandManager extends ListenerAdapter {
     public CommandManager() {
 
         try {
+            this.addCommands(new SetupCommand());
+
             // Add commands here
-            commands.add(new HelpCommand(this));
-            commands.add(new PlayerListCommand());
-            commands.add(new StopServerCommand());
-            commands.add(new BanCommand());
-            commands.add(new PardonCommand());
-            commands.add(new WhitelistCommand());
+            this.addCommands(new HelpCommand(this));
+            this.addCommands(new PlayerListCommand());
+            this.addCommands(new StopServerCommand());
+            this.addCommands(new BanCommand());
+            this.addCommands(new PardonCommand());
+            this.addCommands(new WhitelistCommand());
 
             // Unify all to one command
-            commands.add(new ChannelAddCommand());
-            commands.add(new ChannelRemoveCommand());
-            commands.add(new ChannelConfigCommand());
+            this.addCommands(
+                new ChannelAddCommand(),
+                new ChannelRemoveCommand(),
+                new ChannelConfigCommand()
+            );
         } catch (Exception e) {
-            DiscordCraft.instance().getLogger().severe("An error occurred while adding commands!");
-            e.printStackTrace();
+            DiscordCraft.logException(e, Messages.getMessage("errors.command-registration-error"));
         }
 
     }
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-
         for (DiscordCommand command : commands) {
             if (command.getName().equals(event.getName())) {
                 if (command.isEnabled()) {
@@ -52,8 +59,7 @@ public class CommandManager extends ListenerAdapter {
                     if (command.isAdministratorOnly()) {
                         // Check if the user has the required permissions
                         if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-                            event.reply("You don't have the required permissions to use this command!")
-                                    .setEphemeral(true).queue();
+                            event.reply(Messages.getMessage("commands.no-permission")).setEphemeral(true).queue();
                             return;
                         }
                     }
@@ -62,54 +68,53 @@ public class CommandManager extends ListenerAdapter {
                     try {
                         // Execute the command
                         command.onCommandInteraction(event);
+                        return;
                     } catch (Exception e) {
-                        DiscordCraft.instance().getLogger()
-                                .severe("An error occurred while executing command: " + command.getName());
-                        e.printStackTrace();
+                        DiscordCraft.discordLogException(e, Messages.getMessage("errors.command-error", "command_name", command.getName(), "member", event.getMember()));
+                        event.reply(Messages.getMessage("commands.internal-error")).setEphemeral(true).queue();
                     }
 
                     return;
                 } else {
                     // Command is disabled
-                    event.reply("This command is disabled!").setEphemeral(true).queue();
+                    event.reply(Messages.getMessage("commands.disabled")).setEphemeral(true).queue(); // Should never happen because the command should not be registered
                     return;
                 }
             }
         }
 
         // Command not found
-        event.reply("Command not found!").setEphemeral(true).queue();
+        event.reply(Messages.getMessage("commands.not-found")).setEphemeral(true).queue(); // Should never happen because the command should not be registered
     }
 
     private void registerCommands(Guild guild) {
         // Register commands
 
-        if (guild.getIdLong() == Discord.getBotConfig().getLong("server")) {
-            
-            DiscordCraft.logInfo("Registering commands for guild " + guild.getName());
-            DiscordCraft.logInfo("Guild matches main server, registering commands. (" + commands.size() + " commands)");
+        DiscordCraft.logInfo("Registering commands for guild \"" + guild.getName() + "\"");
 
-            // Register commands
+        List<CommandData> commandDataList = new ArrayList<>();
 
-            List<CommandData> commandDataList = new ArrayList<>();
+        for (DiscordCommand command : commands) {
 
-            for (DiscordCommand command : commands) {
-
-                DiscordCraft.logInfo("Registering command: " + command.getName() + " is enabled: " + command.isEnabled());
-
-                if (command.isEnabled()) {
-                    SlashCommandData data = Commands.slash(command.getName(), command.getDescription());
-
-                    if (command.hasOptions()) {
-                        data.addOptions(command.getOptions());
-                    }
-
-                    commandDataList.add(data);
-                }
+            if (!command.isGlobal() && guild.getIdLong() != Discord.getBotConfig().getLong("server")) {
+                // Skip if the command is not global and the guild is not the main server
+                continue;
             }
 
-            guild.updateCommands().addCommands(commandDataList).queue();
+            DiscordCraft.logInfo("Registering command: \"" + command.getName() + "\" is enabled: \"" + command.isEnabled() + "\"");
+
+            if (command.isEnabled()) {
+                SlashCommandData data = Commands.slash(command.getName(), command.getDescription());
+
+                if (command.hasOptions()) {
+                    data.addOptions(command.getOptions());
+                }
+
+                commandDataList.add(data);
+            }
         }
+
+        guild.updateCommands().addCommands(commandDataList).queue();
 
     }
 
@@ -125,20 +130,20 @@ public class CommandManager extends ListenerAdapter {
 
     // Command management
 
-    public void addCommands(DiscordCommand... commands) {
+    public void addCommands(@NotNull DiscordCommand... commands) {
         for (DiscordCommand command : commands) {
-            this.commands.add(command);
+            if (command != null) {
+                this.commands.add(command);
+            }
         }
     }
 
-    public void addCommands(List<DiscordCommand> commands) {
-        this.commands.addAll(commands);
-    }
-
+    @Nullable
     public List<DiscordCommand> getCommands() {
         return commands;
     }
 
+    @Nullable
     public DiscordCommand getCommand(String name) {
         for (DiscordCommand command : commands) {
             if (command.getName().equals(name)) {

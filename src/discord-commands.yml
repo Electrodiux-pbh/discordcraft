@@ -21,7 +21,7 @@ commands:
         name: Banned
     messages:
       list-disabled: '%list_name% players list is disabled!'
-      list-empty: There are no %list_name% players online!
+      list-empty: There are no %list_name% players!
       list-header: 'List of %list_name% players (%player_count%):'
       list-row: '- ***%player%***'
   

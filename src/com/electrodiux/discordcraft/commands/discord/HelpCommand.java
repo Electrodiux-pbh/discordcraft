@@ -13,8 +13,7 @@ public class HelpCommand extends DiscordCommand {
 
     @Override
     public void onCommandInteraction(SlashCommandInteractionEvent event) {
-
-        boolean isEphemeral = getConfig().getBoolean("is-ephemeral", false);
+        boolean isEphemeral = getConfig().getBoolean("is-ephemeral", true);
         String rowFormat = getConfig().getString("row-format", "- %command%: %message%");
 
         StringBuilder message = new StringBuilder(
@@ -29,9 +28,7 @@ public class HelpCommand extends DiscordCommand {
                     continue; // Skip commands without help messages
                 }
 
-                message
-                .append("\n")
-                .append(rowFormat.replace("%command%", command.getName()).replace("%message%", helpMessage));
+                message.append("\n").append(rowFormat.replace("%command%", command.getName()).replace("%message%", helpMessage));
             }
         }
 

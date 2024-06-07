@@ -19,7 +19,7 @@ public class PlayerEventsListener implements Listener {
 
     @EventHandler
     private void onPlayerJoin(PlayerJoinEvent event) {
-        String message = Messages.getMessage("player.joined", "%player%", event.getPlayer().getName());
+        String message = Messages.getMessage("player.joined", "player", event.getPlayer());
 
         for (LinkedChannel linkedChannel : Discord.getLinkedChannels()) {
             if (linkedChannel.canSendPlayerJoinMessages()) {
@@ -29,8 +29,8 @@ public class PlayerEventsListener implements Listener {
     }
 
     @EventHandler
-    private void onPlayerDisconnect(PlayerQuitEvent event) {
-        String message = Messages.getMessage("player.left", "%player%", event.getPlayer().getName());
+    private void onPlayerLeft(PlayerQuitEvent event) {
+        String message = Messages.getMessage("player.left", "player", event.getPlayer());
 
         for (LinkedChannel linkedChannel : Discord.getLinkedChannels()) {
             if (linkedChannel.canSendPlayerLeaveMessages()) {
@@ -44,20 +44,14 @@ public class PlayerEventsListener implements Listener {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
 
-            String deathMessageFormat = Messages.getRawMessage("player.death");
-
             EntityDamageEvent damageEvent = event.getEntity().getLastDamageCause();
-            String deathMessage = Messages.getRawMessage("custom-death-messages." + damageEvent.getCause().name().toLowerCase());
+            String deathMessage = Messages.getMessageWithDefault("custom-death-messages." + damageEvent.getCause().name().toLowerCase(), null, "death_message", event.getDeathMessage());
 
             if (deathMessage == null) {
                 deathMessage = event.getDeathMessage();
-            } else {
-                deathMessage = deathMessage.replace("%player%", player.getName());
             }
 
-            String finalMessage = deathMessageFormat
-            .replace("%player%", player.getName())
-            .replace("%death_message%",  deathMessage);
+            String finalMessage = Messages.getMessage("player.death", "player", player, "death_message", deathMessage);
 
             for (LinkedChannel linkedChannel : Discord.getLinkedChannels()) {
                 if (linkedChannel.canSendPlayerDeathMessages()) {
@@ -83,7 +77,7 @@ public class PlayerEventsListener implements Listener {
                 if (damager instanceof Player) {
                     Player killer = (Player) damager;
 
-                    String killMessage = Messages.getMessage("player.murder", "%killer%", killer.getName(), "%victim%", player.getName());
+                    String killMessage = Messages.getMessage("player.murder", "killer", killer, "victim", player);
 
                     // Send a message to the linked channels
                     for (LinkedChannel linkedChannel : Discord.getLinkedChannels()) {

@@ -36,7 +36,7 @@ public class StopServerCommand extends DiscordCommand {
             }
         }
 
-        DiscordCraft.logInfo("Stopping server in " + delay + " seconds, requested by " + event.getUser().getEffectiveName());
+        DiscordCraft.discordLogInfo("Stopping server in " + delay + " seconds, requested by " + event.getUser().getAsMention());
 
         Bukkit.getScheduler().runTaskLater(DiscordCraft.instance(), this::stopServer, delay * 20); // Time in ticks
     }

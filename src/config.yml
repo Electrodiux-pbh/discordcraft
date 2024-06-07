@@ -1,6 +1,4 @@
 messages:
-  plugin-enabled: '%name% v%version% has been enabled!'
-
   chat:
     minecraft-format: '[%guild% -> %channel%] &e<%username%> &f%message%&7%attachments%'
     minecraft-edited-format: '[%guild% -> %channel%] &e<%username%> &f%message%&7%attachments% &8&l(Edited)'
@@ -9,17 +7,17 @@ messages:
     discord-format: '**<%player%>:** %message%'
 
   player:
-    joined: '**%player%** has joined the game 😁 🎉'
-    left: '**%player%** has left the game 😭'
-    death: 'Haha, %player% died because `%death_message%`'
-    murder: '**%killer%** has killed **%victim%** 😈'
+    joined: '**%player_name%** has joined the game 😁 🎉'
+    left: '**%player_name%** has left the game 😭'
+    death: 'Haha, %player_name% died because `%death_message%`'
+    murder: '**%killer_name%** has killed **%victim_name%** 😈'
 
   custom-death-messages:
-    lava: '**%player%** fell into lava. 🔥🥵'
-    fire: '**%player%** burned to death. 🔥🥵'
-    fall: '**%player%** fell from a high place. 🪂✨'
-    void: '**%player%** fell into the void. 🌌🪂'
-    drowning: '**%player%** drowned. 🌊'
+    lava: '%death_message% 🔥🥵'
+    fire: '%death_message% 🔥🥵'
+    fall: '%death_message% 🪂✨'
+    void: '%death_message% 🌌🪂'
+    drowning: '%death_message% 🌊'
 
   server:
     start: |-

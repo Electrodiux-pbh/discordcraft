@@ -16,6 +16,7 @@ public abstract class DiscordCommand {
     // Command status
 
     private boolean enabled = true;
+    private boolean global = false;
 
     // Basic command information
 
@@ -41,8 +42,7 @@ public abstract class DiscordCommand {
 
         // Initialize the configuration
 
-        config = DiscordCraft.instance().getDiscordCommandsConfigManager().getConfig()
-        .getConfigurationSection("commands." + configName);
+        config = DiscordCraft.instance().getDiscordCommandsConfigManager().getConfig().getConfigurationSection("commands." + configName);
 
         if (config == null) {
             throw new IllegalArgumentException("Configuration section not found for command: " + configName);
@@ -123,6 +123,10 @@ public abstract class DiscordCommand {
         return options;
     }
 
+    public final boolean isGlobal() {
+        return global;
+    }
+
     // Setters
 
     protected final void setName(String name) {
@@ -143,6 +147,10 @@ public abstract class DiscordCommand {
 
     protected final void setAdministratorOnly(boolean isAdministratorOnly) {
         this.isAdministratorOnly = isAdministratorOnly;
+    }
+
+    protected final void setGlobal(boolean global) {
+        this.global = global;
     }
 
     // Abstract methods
