@@ -48,7 +48,7 @@ commands:
   
   channel-link:
     enabled: true
-    command: channellink
+    command: link
     description: Adds a channel to the list of channels
     help: Adds a channel to the list of channels
     admin-only: true
