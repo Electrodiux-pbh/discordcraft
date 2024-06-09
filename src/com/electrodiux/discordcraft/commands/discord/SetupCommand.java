@@ -31,6 +31,9 @@ public class SetupCommand extends DiscordCommand {
 
         OptionData optionActivityType = addOption(OptionType.STRING, "activity-type", "The type of activity to show in the bot status", false);
         for (ActivityType activityType : ActivityType.values()) {
+            if (activityType == ActivityType.CUSTOM_STATUS) {
+                continue;
+            }
             optionActivityType.addChoice(StringUtils.capitalize(activityType.name()), activityType.name());
         }
 
