@@ -8,18 +8,6 @@ activity:
   type: PLAYING
   name: Minecraft Server
 
-channel-defaults:
-  minecraft-chat-messages: true
-  player-join-messages: true
-  player-leave-messages: true
-  player-death-messages: true
-  player-murder-messages: true
-  discord-messages: true
-  discord-bot-messages: true
-  discord-system-messages: true
-  server-start: true
-  server-stop: true
-
 # We recommend to not change anything below this line unless you know what you are doing, as it may break the bot.
 # You can configure the bot using commands through Discord. Use /help to see the available commands.
 

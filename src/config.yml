@@ -1,40 +1,11 @@
-messages:
-  chat:
-    minecraft-format: '[%guild% -> %channel%] &e<%username%> &f%message%&7%attachments%'
-    minecraft-edited-format: '[%guild% -> %channel%] &e<%username%> &f%message%&7%attachments% &8&l(Edited)'
-    attachment-spoiler: ' (spoiler)'
-    attachment-separator: ', '
-    discord-format: '**<%player%>:** %message%'
-
-  player:
-    joined: '**%player_name%** has joined the game 😁 🎉'
-    left: '**%player_name%** has left the game 😭'
-    death: 'Haha, %player_name% died because `%death_message%`'
-    murder: '**%killer_name%** has killed **%victim_name%** 😈'
-
-  custom-death-messages:
-    lava: '%death_message% 🔥🥵'
-    fire: '%death_message% 🔥🥵'
-    fall: '%death_message% 🪂✨'
-    void: '%death_message% 🌌🪂'
-    drowning: '%death_message% 🌊'
-
-  server:
-    start: |-
-      🟢 **The server has STARTED!** 🟢
-
-      ⚔️ The server is now online. Gather your friends, start building epic structures, and embark on new adventures. ⛏️
-      Happy Crafting!
-
-      **Server IP:** `mc.yourserver.com`
-
-      <@&your-role-id>
-    stop: |-
-      🔴 **The server has SHUT DOWN!** 🔴
-
-      ⚔️ The server is now offline. Time to rest, plan new builds, and prepare for future adventures. ⛏️
-      Thank you for playing!
-
-      **Server IP:** `mc.yourserver.com`
-
-      <@&your-role-id>
+channel-defaults:
+  minecraft-chat-messages: true
+  player-join-messages: true
+  player-leave-messages: true
+  player-death-messages: true
+  player-murder-messages: true
+  discord-messages: true
+  discord-bot-messages: true
+  discord-system-messages: true
+  server-start: true
+  server-stop: true

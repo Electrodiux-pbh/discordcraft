@@ -165,7 +165,7 @@ public class LinkedChannel {
 
         LinkedChannel data = new LinkedChannel();
 
-        ConfigurationSection defaults = Discord.getBotConfig().getConfigurationSection(DEFAULT_OPTIONS);
+        ConfigurationSection defaults = DiscordCraft.instance().getMainConfigManager().getSection(DEFAULT_OPTIONS);
 
         data.config = config;
 
@@ -195,7 +195,7 @@ public class LinkedChannel {
 
         LinkedChannel data = new LinkedChannel();
 
-        ConfigurationSection defaults = Discord.getBotConfig().getConfigurationSection(DEFAULT_OPTIONS);
+        ConfigurationSection defaults = DiscordCraft.instance().getMainConfigManager().getSection(DEFAULT_OPTIONS);
 
         data.config = Discord.getBotConfig().createSection(CHANNEL_LIST + ".c" + channel.getIdLong());
 

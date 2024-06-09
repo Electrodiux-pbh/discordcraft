@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -144,10 +143,6 @@ public class DiscordCraft extends JavaPlugin {
 
     public ConfigManager getDiscordCommandsConfigManager() {
         return discordCommandsConfig;
-    }
-
-    public static FileConfiguration getConfiguration() {
-        return instance().getMainConfigManager().getConfig();
     }
 
     // Checkers

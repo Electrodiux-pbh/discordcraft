@@ -39,6 +39,7 @@ server:
     **Server IP:** `mc.yourserver.com`
 
     <@&your-role-id>
+  
   stop: |-
     🔴 **The server has SHUT DOWN!** 🔴
 
