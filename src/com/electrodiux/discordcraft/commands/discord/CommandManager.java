@@ -66,7 +66,7 @@ public class CommandManager extends ListenerAdapter {
 
                         // Check if the command was executed in the main server
 
-                        if (!event.getGuild().equals(Discord.getMainGuild())) {
+                        if (!command.isGlobal() && !event.getGuild().equals(Discord.getMainGuild())) {
                             event.reply(Messages.getMessage(CommandManager.COMMAND_MAIN_GUILD_ONLY)).setEphemeral(true).queue();
                             return;
                         }
