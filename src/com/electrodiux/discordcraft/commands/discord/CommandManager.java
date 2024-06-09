@@ -23,6 +23,16 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public class CommandManager extends ListenerAdapter {
 
+    // Message keys
+
+    public static final String COMMAND_MAIN_GUILD_ONLY = "commands.main-guild-only";
+    public static final String COMMAND_NO_PERMISSION = "commands.no-permission";
+    public static final String COMMAND_INTERNAL_ERROR = "commands.internal-error";
+    public static final String COMMAND_DISABLED = "commands.disabled";
+    public static final String COMMAND_NOT_FOUND = "commands.not-found";
+    public static final String COMMAND_INVALID_SUBCOMMAND = "commands.invalid-subcommand";
+    
+
     private List<DiscordCommand> commands = new ArrayList<>();
 
     public CommandManager() {
@@ -39,11 +49,7 @@ public class CommandManager extends ListenerAdapter {
             this.addCommands(new WhitelistCommand());
 
             // Unify all to one command
-            this.addCommands(
-                new ChannelAddCommand(),
-                new ChannelRemoveCommand(),
-                new ChannelConfigCommand()
-            );
+            this.addCommands(new ChannelLinkCommand());
         } catch (Exception e) {
             DiscordCraft.logException(e, Messages.getMessage("errors.command-registration-error"));
         }
@@ -57,9 +63,17 @@ public class CommandManager extends ListenerAdapter {
                 if (command.isEnabled()) {
 
                     if (command.isAdministratorOnly()) {
+
+                        // Check if the command was executed in the main server
+
+                        if (!event.getGuild().equals(Discord.getMainGuild())) {
+                            event.reply(Messages.getMessage(CommandManager.COMMAND_MAIN_GUILD_ONLY)).setEphemeral(true).queue();
+                            return;
+                        }
+
                         // Check if the user has the required permissions
                         if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-                            event.reply(Messages.getMessage("commands.no-permission")).setEphemeral(true).queue();
+                            event.reply(Messages.getMessage(CommandManager.COMMAND_NO_PERMISSION)).setEphemeral(true).queue();
                             return;
                         }
                     }
@@ -71,20 +85,20 @@ public class CommandManager extends ListenerAdapter {
                         return;
                     } catch (Exception e) {
                         DiscordCraft.discordLogException(e, Messages.getMessage("errors.command-error", "command_name", command.getName(), "member", event.getMember()));
-                        event.reply(Messages.getMessage("commands.internal-error")).setEphemeral(true).queue();
+                        event.reply(Messages.getMessage(CommandManager.COMMAND_INTERNAL_ERROR)).setEphemeral(true).queue();
                     }
 
                     return;
                 } else {
                     // Command is disabled
-                    event.reply(Messages.getMessage("commands.disabled")).setEphemeral(true).queue(); // Should never happen because the command should not be registered
+                    event.reply(Messages.getMessage(CommandManager.COMMAND_DISABLED)).setEphemeral(true).queue(); // Should never happen because the command should not be registered
                     return;
                 }
             }
         }
 
         // Command not found
-        event.reply(Messages.getMessage("commands.not-found")).setEphemeral(true).queue(); // Should never happen because the command should not be registered
+        event.reply(Messages.getMessage(CommandManager.COMMAND_NOT_FOUND)).setEphemeral(true).queue(); // Should never happen because the command should not be registered
     }
 
     private void registerCommands(Guild guild) {
@@ -96,7 +110,7 @@ public class CommandManager extends ListenerAdapter {
 
         for (DiscordCommand command : commands) {
 
-            if (!command.isGlobal() && guild.getIdLong() != Discord.getBotConfig().getLong("server")) {
+            if (!command.isGlobal() && guild.getIdLong() != Discord.getBotConfig().getLong(Discord.GUILD_ID)) {
                 // Skip if the command is not global and the guild is not the main server
                 continue;
             }
@@ -108,6 +122,10 @@ public class CommandManager extends ListenerAdapter {
 
                 if (command.hasOptions()) {
                     data.addOptions(command.getOptions());
+                }
+
+                if (command.hasSubcommands()) {
+                    data.addSubcommands(command.getSubcommands());
                 }
 
                 commandDataList.add(data);

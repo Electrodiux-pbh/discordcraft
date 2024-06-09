@@ -41,16 +41,16 @@ public class SetupCommand extends DiscordCommand {
     @Override
     public void onCommandInteraction(SlashCommandInteractionEvent event) {
         
-        if (Discord.getGuild() != null) {
+        if (Discord.getMainGuild() != null) {
             event.reply(Messages.getMessage("setup.already")).setEphemeral(true).queue();
             return;
         }
 
         ConfigurationSection botConfig = DiscordCraft.instance().getBotConfigManager().getConfig();
 
-        // Set server
+        // Set guild
 
-        botConfig.set("server", event.getGuild().getIdLong());
+        botConfig.set(Discord.GUILD_ID, event.getGuild().getIdLong());
 
         // Activity
 
@@ -59,15 +59,15 @@ public class SetupCommand extends DiscordCommand {
         OptionMapping activityName = event.getOption("activity-name");
 
         if (showActivity != null) {
-            botConfig.set("activity.show", showActivity.getAsBoolean());
+            botConfig.set(Discord.ACTIVITY_ENABLED, showActivity.getAsBoolean());
         }
 
         if (activityType != null) {
-            botConfig.set("activity.type", activityType.getAsString());
+            botConfig.set(Discord.ACTIVITY_TYPE, activityType.getAsString());
         }
 
         if (activityName != null) {
-            botConfig.set("activity.name", activityName.getAsString());
+            botConfig.set(Discord.ACTIVITY_NAME, activityName.getAsString());
         }
 
         // Log Channel
@@ -75,7 +75,7 @@ public class SetupCommand extends DiscordCommand {
         OptionMapping logChannel = event.getOption("log-channel");
 
         if (logChannel != null) {
-            botConfig.set("log-channel", logChannel.getAsChannel().getIdLong());
+            botConfig.set(Discord.LOG_CHANNEL, logChannel.getAsChannel().getIdLong());
         }
 
         // Save config

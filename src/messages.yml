@@ -10,9 +10,12 @@ commands:
   disabled: "This command has been disabled by the server administrator."
   internal-error: "An internal error occurred while executing this command. Administrators have been notified."
   not-found: "Command not found. Use `/help` to see the available commands."
+  main-guild-only: "This command can only be executed on the main server."
+  invalid-subcommand: "Invalid subcommand. Use `/help` to see the available subcommands."
 
 player:
-  joined: '**%player_name%** has joined the game 😁 🎉'
+  join: '**%player_name%** has joined the game 😁 🎉'
+  first-join: '**%player_name%** has joined the game for the first time! 🎉'
   left: '**%player_name%** has left the game 😭'
   death: 'Haha, %player_name% died because `%death_message%`'
   murder: '**%killer_name%** has killed **%victim_name%** 😈'

@@ -1,4 +1,14 @@
 commands:
+  set-global-channel:
+    enabled: true
+    command: globalchannel
+    description: Sets the global channel
+    help: Help message for set-global-channel
+    admin-only: true
+    is-ephemeral: false
+  configuration:
+    description: Configures the plugin
+    help: Help message for configure
   playerlist:
     enabled: true
     command: playerlist
@@ -21,7 +31,7 @@ commands:
         name: Banned
     messages:
       list-disabled: '%list_name% players list is disabled!'
-      list-empty: There are no %list_name% players!
+      list-empty: There are no %list_name% players online!
       list-header: 'List of %list_name% players (%player_count%):'
       list-row: '- ***%player%***'
   
@@ -36,13 +46,12 @@ commands:
     is-ephemeral: true
     show-title: true
   
-  set-global-channel:
+  channel-link:
     enabled: true
-    command: globalchannel
-    description: Sets the global channel
-    help: Help message for set-global-channel
+    command: channellink
+    description: Adds a channel to the list of channels
+    help: Adds a channel to the list of channels
     admin-only: true
-    is-ephemeral: false
   
   help: # TODO: Add a flag to show only the commands that the user can use
     enabled: true
@@ -99,7 +108,3 @@ commands:
       already-enabled: The whitelist is already enabled!
       disabled: The whitelist has been disabled!
       already-disabled: The whitelist is already disabled!
-
-  configuration:
-    description: Configures the plugin
-    help: Help message for configure

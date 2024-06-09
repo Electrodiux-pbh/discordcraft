@@ -25,31 +25,23 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 public class DiscordChatListener extends ListenerAdapter {
 
-    private String messageFormat;
-    private String messageEditedFormat;
-
-    public DiscordChatListener() {
-        messageFormat = Messages.getMessage("chat.minecraft-format");
-        messageEditedFormat = Messages.getMessage("chat.minecraft-edited-format");
-    }
-
     @Override
     public void onMessageUpdate(@Nonnull MessageUpdateEvent event) {
         if (event.getChannelType() == ChannelType.PRIVATE) {
             return;
         }
 
-        onMessage(event, event.getAuthor(), event.getMessage(), messageEditedFormat);
+        onMessage(event, event.getAuthor(), event.getMessage(), true);
     }
 
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
-        onMessage(event, event.getAuthor(), event.getMessage(), messageFormat);
+        onMessage(event, event.getAuthor(), event.getMessage(), false);
     }
 
     // Message in minecraft chat from discord
 
-    private void onMessage(GenericMessageEvent event, User author, Message message, String format) {
+    private void onMessage(GenericMessageEvent event, User author, Message message, boolean edited) {
 
         if (event.getChannelType() == ChannelType.PRIVATE) { // ignore private messages
             return;
@@ -75,11 +67,13 @@ public class DiscordChatListener extends ListenerAdapter {
 
         // normal message broadcast
 
-        String messageWithoutAttachments = format // replace placeholders except for attachments
-                .replace("%username%", author.getEffectiveName())
-                .replace("%guild%", message.getGuild().getName())
-                .replace("%channel%", message.getChannel().getName())
-                .replace("%message%", message.getContentDisplay());
+        String messageWithoutAttachments = Messages.applyMinecraftColorFormatting(Messages.getMessage(
+                edited ? "chat.minecraft-edited-format" : "chat.minecraft-format",
+                "username", author.getEffectiveName(),
+                "guild", message.getGuild().getName(),
+                "channel", message.getChannel().getName(),
+                "message", message.getContentDisplay()
+        ));
 
         // Replace attachments placeholder
 

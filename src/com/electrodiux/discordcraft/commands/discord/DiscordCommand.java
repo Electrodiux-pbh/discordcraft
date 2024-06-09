@@ -10,6 +10,7 @@ import com.electrodiux.discordcraft.DiscordCraft;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 public abstract class DiscordCommand {
 
@@ -28,9 +29,10 @@ public abstract class DiscordCommand {
 
     private boolean isAdministratorOnly = false;
 
-    // Command options
+    // Command data
 
     private Collection<OptionData> options = new ArrayList<>();
+    private Collection<SubcommandData> subcommands = new ArrayList<>();
 
     // Command Configuration
 
@@ -80,7 +82,7 @@ public abstract class DiscordCommand {
         return config;
     }
 
-    // Command argument methods
+    // Command options
 
     protected final OptionData addOption(OptionData option) {
         options.add(option);
@@ -93,8 +95,17 @@ public abstract class DiscordCommand {
         return option;
     }
 
-    public boolean hasOptions() {
-        return !options.isEmpty();
+    // Command subcommands
+
+    protected final SubcommandData addSubcommand(SubcommandData subcommand) {
+        subcommands.add(subcommand);
+        return subcommand;
+    }
+
+    protected final SubcommandData addSubcommand(String name, String description) {
+        SubcommandData subcommand = new SubcommandData(name, description);
+        subcommands.add(subcommand);
+        return subcommand;
     }
 
     // Getters
@@ -121,6 +132,18 @@ public abstract class DiscordCommand {
 
     public final Collection<OptionData> getOptions() {
         return options;
+    }
+
+    public final boolean hasOptions() {
+        return !options.isEmpty();
+    }
+
+    public final Collection<SubcommandData> getSubcommands() {
+        return subcommands;
+    }
+
+    public final boolean hasSubcommands() {
+        return !subcommands.isEmpty();
     }
 
     public final boolean isGlobal() {

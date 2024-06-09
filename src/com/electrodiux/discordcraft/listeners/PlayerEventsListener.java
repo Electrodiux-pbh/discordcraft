@@ -19,7 +19,14 @@ public class PlayerEventsListener implements Listener {
 
     @EventHandler
     private void onPlayerJoin(PlayerJoinEvent event) {
-        String message = Messages.getMessage("player.joined", "player", event.getPlayer());
+        String message = Messages.getMessage("player.join", "player", event.getPlayer());
+
+        if (!event.getPlayer().hasPlayedBefore()) {
+            String firstJoinMessage = Messages.getMessageWithDefault("player.first-join", null, "player", event.getPlayer());
+            if (firstJoinMessage != null) {
+                message = firstJoinMessage;
+            }
+        }
 
         for (LinkedChannel linkedChannel : Discord.getLinkedChannels()) {
             if (linkedChannel.canSendPlayerJoinMessages()) {

@@ -23,7 +23,7 @@ channel-defaults:
 # We recommend to not change anything below this line unless you know what you are doing, as it may break the bot.
 # You can configure the bot using commands through Discord. Use /help to see the available commands.
 
-server: 0
+guild: 0
 log-channel: 0
 
 channels:

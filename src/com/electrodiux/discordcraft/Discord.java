@@ -27,9 +27,22 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 public class Discord {
 
+    // Config keys
+
+    public static final String BOT_TOKEN = "token";
+
+    public static final String GUILD_ID = "guild";
+    public static final String LOG_CHANNEL = "log-channel";
+
+    public static final String ACTIVITY_ENABLED = "activity.show";
+    public static final String ACTIVITY_TYPE = "activity.type";
+    public static final String ACTIVITY_NAME = "activity.name";
+
+    // Data
+
     private static JDA jda;
 
-    private static Guild server;
+    private static Guild mainGuild;
 
     private static ConfigurationSection config;
 
@@ -43,7 +56,7 @@ public class Discord {
 
         config = DiscordCraft.instance().getBotConfigManager().getConfig();
 
-        String token = getBotConfig().getString("token");
+        String token = getBotConfig().getString(BOT_TOKEN);
 
         if (token == null || token.isBlank()) {
             DiscordCraft.logWarning("No bot token was found in the config! Please add one and restart the server.");
@@ -57,15 +70,15 @@ public class Discord {
             return false;
         }
 
-        server = getGuild(getBotConfig().getLong("server", 0));
+        mainGuild = getGuild(getBotConfig().getLong(GUILD_ID, 0));
 
-        if (server == null) {
+        if (mainGuild == null) {
             DiscordCraft.logWarning("No server was found with the ID provided in the config! Please check the ID or run /setup command on Discord.");
         }
 
         linkedChannels = LinkedChannel.loadAllChannels();
 
-        logChannel = getTextChannel(getBotConfig().getLong("log-channel", 0));
+        logChannel = getTextChannel(getBotConfig().getLong(LOG_CHANNEL, 0));
 
         DiscordCraft.logInfo("Loaded " + linkedChannels.size() + " linked channels.");
         for (LinkedChannel linkedChannel : linkedChannels) {
@@ -86,17 +99,17 @@ public class Discord {
     }
 
     private static void configureActivity(JDABuilder builder) {
-        boolean showActivity = getBotConfig().getBoolean("activity.show", true);
+        boolean showActivity = getBotConfig().getBoolean(ACTIVITY_ENABLED, true);
 
         if (!showActivity) {
             return;
         }
 
-        String activityType = getBotConfig().getString("activity.type");
-        String activityName = getBotConfig().getString("activity.name");
+        String activityType = getBotConfig().getString(ACTIVITY_TYPE);
+        String activityName = getBotConfig().getString(ACTIVITY_NAME);
 
-        Bukkit.getConsoleSender().sendMessage("Activity type: " + activityType);
-        Bukkit.getConsoleSender().sendMessage("Activity name: " + activityName);
+        DiscordCraft.logInfo("Activity type: " + activityType);
+        DiscordCraft.logInfo("Activity name: " + activityName);
 
         if (activityName != null) {
             ActivityType type = ActivityType.valueOf(activityType);
@@ -148,7 +161,7 @@ public class Discord {
     public static TextChannel getTextChannel(long id) {
 
         if (id != 0) {
-            TextChannel channel = server.getTextChannelById(id);
+            TextChannel channel = mainGuild.getTextChannelById(id);
             if (channel != null) {
                 Bukkit.getConsoleSender().sendMessage("Found text channel: " + channel.getName());
                 return channel;
@@ -162,7 +175,7 @@ public class Discord {
     public static VoiceChannel getVoiceChannel(long id) {
 
         if (id != 0) {
-            VoiceChannel channel = server.getVoiceChannelById(id);
+            VoiceChannel channel = mainGuild.getVoiceChannelById(id);
             if (channel != null) {
                 Bukkit.getConsoleSender().sendMessage("Found voice channel: " + channel.getName());
                 return channel;
@@ -176,7 +189,7 @@ public class Discord {
     public static Category getCategory(long id) {
 
         if (id != 0) {
-            Category category = server.getCategoryById(id);
+            Category category = mainGuild.getCategoryById(id);
             if (category != null) {
                 Bukkit.getConsoleSender().sendMessage("Found category: " + category.getName());
                 return category;
@@ -204,7 +217,7 @@ public class Discord {
     public static Role getRole(long id) {
 
         if (id != 0) {
-            Role role = server.getRoleById(id);
+            Role role = mainGuild.getRoleById(id);
             if (role != null) {
                 Bukkit.getConsoleSender().sendMessage("Found role: " + role.getName());
                 return role;
@@ -221,8 +234,8 @@ public class Discord {
         return jda;
     }
 
-    public static Guild getGuild() {
-        return server;
+    public static Guild getMainGuild() {
+        return mainGuild;
     }
 
     public static ConfigurationSection getBotConfig() {

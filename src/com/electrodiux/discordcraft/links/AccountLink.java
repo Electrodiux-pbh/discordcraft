@@ -35,7 +35,7 @@ public class AccountLink {
         this.discordId = discordId;
         this.minecraftUuid = minecraftUuid;
 
-        Discord.getGuild().retrieveMemberById(discordId).queue(m -> {
+        Discord.getMainGuild().retrieveMemberById(discordId).queue(m -> {
             member = m;
         });
 
